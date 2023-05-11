@@ -16,8 +16,8 @@ side_wide=20
 left_roi =  (              side_th , 70, side_wide, 100)
 right_roi = (320-side_th-side_wide , 70, side_wide, 100)
 
-midle_wide=150
-middle_roi = ((int)((320-midle_wide)/2), 140, midle_wide, 20)
+midle_wide=200
+middle_roi = ((int)((320-midle_wide)/2), 200, midle_wide, 20)
 
 front_roi = (0, 0, 200, 150) # todo: 注意控制在前方一格的位置
 red_roi = (10, 10, 300, 180) # todo: 注意控制在前方一格的位置
@@ -114,7 +114,7 @@ if __name__ == '__main__':
             # 读到左/右线
             cx=cx|0x01
         else :
-            cx=cx&0xF0 # 原来是 0x10 感觉有BUG
+            cx=cx&0xF0 # 原来是 0x10
 
         if object == 1:
             cx=cx|0x10
