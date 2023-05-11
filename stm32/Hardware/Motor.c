@@ -1,0 +1,56 @@
+#include "stm32f10x.h"                  // Device header
+#include "PWM.h"
+
+void Motor_Init(void)
+{
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE);
+	GPIO_InitTypeDef GPIO_InitStructure;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11 | GPIO_Pin_8;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+	GPIO_Init(GPIOD, &GPIO_InitStructure);     
+	
+	TIM3_PWM_Init(99,359);
+}
+
+void Motor_SetSpeed(int8_t Speed)  //摄像头朝向为正方向，右轮
+{
+	if (Speed >= 0)
+	{
+		GPIO_SetBits(GPIOA, GPIO_Pin_11);
+		GPIO_SetBits(GPIOD, GPIO_Pin_9);
+		GPIO_ResetBits(GPIOA, GPIO_Pin_8);
+		PWM_SetCompare3(Speed);
+	}
+	else
+	{
+		GPIO_ResetBits(GPIOA, GPIO_Pin_11);
+		GPIO_SetBits(GPIOD, GPIO_Pin_9);
+		GPIO_SetBits(GPIOA, GPIO_Pin_8);
+		PWM_SetCompare3(-Speed);
+	}
+}
+
+void Motor_SetSpeed2(int8_t Speed)  //摄像头朝向为正方向，左轮
+{
+	if (Speed >= 0)
+	{
+		GPIO_SetBits(GPIOB, GPIO_Pin_1);
+		GPIO_ResetBits(GPIOB, GPIO_Pin_0);
+		PWM_SetCompare7( Speed);
+	}
+	else
+	{
+		GPIO_ResetBits(GPIOB, GPIO_Pin_1);
+		GPIO_SetBits(GPIOB, GPIO_Pin_0);
+		PWM_SetCompare7(-Speed);
+	}
+}
