@@ -10,7 +10,7 @@
       <TargetName>Target 1</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060528::V5.06 update 5 (build 528)::ARMCC</pCCUsed>
+      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARM_Compiler_5.06u7</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -783,6 +783,26 @@
               <FileName>Nav.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Utils\Nav.h</FilePath>
+            </File>
+            <File>
+              <FileName>MoveLogic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Utils\MoveLogic.c</FilePath>
+            </File>
+            <File>
+              <FileName>MoveLogic.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Utils\MoveLogic.h</FilePath>
+            </File>
+            <File>
+              <FileName>OpenmvComm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Utils\OpenmvComm.c</FilePath>
+            </File>
+            <File>
+              <FileName>OpenmvComm.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Utils\OpenmvComm.h</FilePath>
             </File>
           </Files>
         </Group>

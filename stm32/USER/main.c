@@ -5,6 +5,7 @@
 #include "Key.h"
 #include "Serial.h"
 #include "Nav.h"
+#include "MoveLogic.h"
 
 uint8_t KeyNum;
 int8_t Speed;
@@ -12,18 +13,14 @@ int8_t Speed;
 int main(void)
 {
 	uint8_t start_flag = 1; //起始标志位
-	uint8_t element_flag=0; //元素标志位 0正常巡线，1到7 7个多路口  8停止标志位
+	//uint8_t element_flag=0; //元素标志位 0正常巡线，1到7 7个多路口  8停止标志位
+	
 	OLED_Init();  //屏幕初始化
 	Motor_Init(); //电机初始化
 	KEY_Init();   //按键初始化
-	Serial_Tuoluoyi_Init(); //陀螺仪串口通信初始化
+	Serial_Gyroscope_Init(); //陀螺仪串口通信初始化
 	Serial_Openmv_Init();	//Openmv串口通信初始化
-//	Motor_SetSpeed(60);
-//	Turn_Right();
-//	Delay_ms(820);
-//	Turn_Left();
-//	Delay_ms(820);
-//	Turn_180();
+	
 	  //以下书写主代码
 	while(1)
 	{
@@ -31,10 +28,8 @@ int main(void)
 		{
 			while(1)
 			{
-				openmv();//摄像头读取到的，改变各个标志位
-				move();//电机动作
+				move(60);
 			}
-			
 		}
 	}
 

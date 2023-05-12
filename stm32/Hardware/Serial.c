@@ -1,13 +1,10 @@
 #include "stm32f10x.h"                  // Device header
-#include <stdio.h>
-#include <stdarg.h>
-#include "OLED.h"                  // Device header
-
+#include "OpenmvComm.h"
 
 uint8_t Serial_RxData;
 uint8_t Serial_RxFlag;
 
-void Serial_Tuoluoyi_Init(void)   //陀螺仪的 串口  32's  PA9 is TX, PA10 is RX
+void Serial_Gyroscope_Init(void)   //陀螺仪的 串口  32's  PA9 is TX, PA10 is RX
 {
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
@@ -55,30 +52,28 @@ void Serial_Tuoluoyi_Init(void)   //陀螺仪的 串口  32's  PA9 is TX, PA10 is RX
 void Serial_Openmv_Init(void)   //Opemmv 的串口
 {
 	//USART,PD5-TX,PD6-RX
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2,ENABLE);
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD,ENABLE);
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);
-    GPIO_PinRemapConfig(GPIO_Remap_USART2,ENABLE);
-
-    GPIO_InitTypeDef GPIO_InitStructure;
-    //TX 
-    GPIO_InitStructure.GPIO_Pin     = GPIO_Pin_5;
-    GPIO_InitStructure.GPIO_Speed    = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode    = GPIO_Mode_AF_PP;
-    GPIO_Init(GPIOD,&GPIO_InitStructure);    
-    //RX 
-    GPIO_InitStructure.GPIO_Pin     = GPIO_Pin_6;
-    GPIO_InitStructure.GPIO_Mode    = GPIO_Mode_IN_FLOATING;
-    GPIO_Init(GPIOD,&GPIO_InitStructure);
-
-    NVIC_InitTypeDef NVIC_InitStructure;     //串口中断配置结构体变量
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2,ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD,ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);
+  GPIO_PinRemapConfig(GPIO_Remap_USART2,ENABLE);
+  GPIO_InitTypeDef GPIO_InitStructure;
+  //TX 
+  GPIO_InitStructure.GPIO_Pin     = GPIO_Pin_5;
+  GPIO_InitStructure.GPIO_Speed    = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode    = GPIO_Mode_AF_PP;
+  GPIO_Init(GPIOD,&GPIO_InitStructure);    
+  //RX 
+  GPIO_InitStructure.GPIO_Pin     = GPIO_Pin_6;
+  GPIO_InitStructure.GPIO_Mode    = GPIO_Mode_IN_FLOATING;
+  GPIO_Init(GPIOD,&GPIO_InitStructure);
+  NVIC_InitTypeDef NVIC_InitStructure;     //串口中断配置结构体变量
 	//USART1 NVIC 配置
-    NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
-		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=0 ;  
-		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;		   
-		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			      					                
-		NVIC_Init(&NVIC_InitStructure);	                        
-//USART 初始化配置
+  NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=0 ;  
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;		   
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			      					                
+  NVIC_Init(&NVIC_InitStructure);	                        
+  //USART 初始化配置
 	USART_InitTypeDef USART_InitStructure;
 	USART_InitStructure.USART_BaudRate = 115200;
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
@@ -93,20 +88,17 @@ void Serial_Openmv_Init(void)   //Opemmv 的串口
 	USART_ClearFlag(USART2, USART_FLAG_TC);    
 }
 
-
-
-u8 Cx=0;
 int Cy;
+uint8_t Cx=0;
 int RxState = 0;	
-int flag_baozan,flag_xianjin,flag_fok;
-//USART2 全局中断服务函数
+//USART2 全局中断服务函数 - openMV RX reading opration included for now, bit shitpile here, lack one layer of implementation(OpenMV_Comm.c).
 void USART2_IRQHandler(void)			 
 {
-		u8 com_data; 
-		u8 i;
-		static u8 RxCounter1=0;
-		static u8 RxBuffer1[10]={0};
-		static u8 RxFlag1 = 0;
+		uint8_t com_data; 
+		uint8_t i;
+		static uint8_t RxCounter1=0;
+		static uint8_t RxBuffer1[10]={0};
+		static uint8_t RxFlag1 = 0;
 
 		if( USART_GetITStatus(USART2,USART_IT_RXNE)!=RESET)  	//接受中断
 		{
@@ -131,24 +123,14 @@ void USART2_IRQHandler(void)
 					}
 				}
 		
-				else if(RxState==2)		//???????????
+				else if(RxState==2)		
 				{
 						if(RxBuffer1[RxCounter1-1] == 0x54)
 						{
-									USART_ITConfig(USART2,USART_IT_RXNE,DISABLE);//??DTSABLE??
+									USART_ITConfig(USART2,USART_IT_RXNE,DISABLE);
 									if(RxFlag1)
 									{
-										if(Cx==16||Cx==17)flag_baozan=1;
-										else flag_baozan=0;
-										if(Cx==32||Cx==33)flag_xianjin=1;
-										else flag_xianjin=0;
-										if(Cx%10==1)flag_fok=1;
-										else flag_fok=0;
-										OLED_ShowSignedNum(1,1,flag_baozan,3);
-										OLED_ShowSignedNum(2,1,flag_xianjin,3);
-										OLED_ShowSignedNum(3,1,flag_fok,3);
-										OLED_ShowSignedNum(4,1,Cy,3);
-
+										OpenMV_On_Recieve(Cx, Cy);
 									}
 									RxFlag1 = 0;
 									RxCounter1 = 0;

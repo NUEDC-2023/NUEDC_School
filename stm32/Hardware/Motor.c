@@ -21,36 +21,36 @@ void Motor_Init(void)
 	TIM3_PWM_Init(99,359);
 }
 
-void Motor_SetSpeed(int8_t Speed)  //摄像头朝向为正方向，右轮
+void Motor_SetSpeed(int8_t Speed)  //摄像头朝向为正方向，right wheel
 {
 	if (Speed >= 0)
 	{
-		GPIO_SetBits(GPIOA, GPIO_Pin_11);
+		GPIO_ResetBits(GPIOA, GPIO_Pin_11);
 		GPIO_SetBits(GPIOD, GPIO_Pin_9);
-		GPIO_ResetBits(GPIOA, GPIO_Pin_8);
+		GPIO_SetBits(GPIOA, GPIO_Pin_8);
 		PWM_SetCompare3(Speed);
 	}
 	else
 	{
 		GPIO_ResetBits(GPIOA, GPIO_Pin_11);
 		GPIO_SetBits(GPIOD, GPIO_Pin_9);
-		GPIO_SetBits(GPIOA, GPIO_Pin_8);
+		GPIO_ResetBits(GPIOA, GPIO_Pin_8);
 		PWM_SetCompare3(-Speed);
 	}
 }
 
-void Motor_SetSpeed2(int8_t Speed)  //摄像头朝向为正方向，左轮
+void Motor_SetSpeed2(int8_t Speed)  //摄像头朝向为正方向，left wheel
 {
 	if (Speed >= 0)
 	{
-		GPIO_SetBits(GPIOB, GPIO_Pin_1);
-		GPIO_ResetBits(GPIOB, GPIO_Pin_0);
-		PWM_SetCompare7( Speed);
+		GPIO_SetBits(GPIOB, GPIO_Pin_0);
+		GPIO_ResetBits(GPIOB, GPIO_Pin_1);
+		PWM_SetCompare7(Speed);
 	}
 	else
 	{
-		GPIO_ResetBits(GPIOB, GPIO_Pin_1);
-		GPIO_SetBits(GPIOB, GPIO_Pin_0);
+		GPIO_ResetBits(GPIOB, GPIO_Pin_0);
+		GPIO_SetBits(GPIOB, GPIO_Pin_1);
 		PWM_SetCompare7(-Speed);
 	}
 }

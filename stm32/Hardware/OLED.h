@@ -1,3 +1,5 @@
+#include <stdInt.h>
+
 #ifndef __OLED_H
 #define __OLED_H
 

@@ -1,4 +1,6 @@
-float kp,ki,kd;
+float kp=1;
+float ki=0;
+float kd=1.5;
 
 float pid_cal(int input,int measure)
 {
@@ -13,5 +15,4 @@ float pid_cal(int input,int measure)
 	if(output<-limit)output=-limit;
 	err_last=err;
 	return output;
-
 }
