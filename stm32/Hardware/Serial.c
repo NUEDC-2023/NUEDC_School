@@ -88,7 +88,6 @@ void Serial_Openmv_Init(void)   //Opemmv 的串口
 	USART_ClearFlag(USART2, USART_FLAG_TC);    
 }
 
-int Cy;
 uint8_t Cx=0;
 int RxState = 0;	
 //USART2 全局中断服务函数 - openMV RX reading opration included for now, bit shitpile here, lack one layer of implementation(OpenMV_Comm.c).
@@ -122,7 +121,6 @@ void USART2_IRQHandler(void)
 						Cy=RxBuffer1[2]|(RxBuffer1[3]<<8);
 					}
 				}
-		
 				else if(RxState==2)		
 				{
 						if(RxBuffer1[RxCounter1-1] == 0x54)
@@ -151,7 +149,6 @@ void USART2_IRQHandler(void)
 									}
 						}
 				}
-	
 				else   //接受异常
 				{
 						RxState = 0;

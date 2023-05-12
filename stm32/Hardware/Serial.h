@@ -5,7 +5,6 @@
 #include <stdint.h>
 #include <stdarg.h>
 
-extern int Cy; //A global variable for main.c
 extern int RxState;	
 
 void Serial_Gyroscope_Init(void);

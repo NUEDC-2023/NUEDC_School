@@ -6,6 +6,12 @@
 #include "Serial.h"
 #include "Nav.h"
 #include "MoveLogic.h"
+#include "OpenmvComm.h"
+
+// Record of global varialble: 
+// OpenmvComm: 
+// 	 int Cy: For marking the centerline (possible value is 255 | 0 - 100)
+// 
 
 uint8_t KeyNum;
 int8_t Speed;

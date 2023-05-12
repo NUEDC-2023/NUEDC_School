@@ -1,7 +1,7 @@
 #include "Motor.h"
 #include "Delay.h"
 #include "PID.h"
-#include "Serial.h"
+#include "OpenmvComm.h"
 
 void Stop(void)
 {	
@@ -42,17 +42,21 @@ void Turn_180(void)
 
 //Ñ²Ïß´úÂë
 void Control(int Speed){
-	// Speed not over 100
+	// Easier to grab when visual rec is out of control.
+	if (Cy == 255) 
+	{
+		//Slowly go ahead when no black line is detected.
+		Motor_SetSpeed(20);
+		Motor_SetSpeed2(20);
+		return;
+	} // Easier for later calc.
+	
   float output = pid_cal(Cy,50) +50;
 	int leftSpeed = Speed*output/100;
 	int rightSpeed = Speed - leftSpeed;
 	if (leftSpeed < 20) leftSpeed = 20;
-	//if (leftSpeed > 65) leftSpeed = 65;
 	if (rightSpeed < 20) rightSpeed = 20;
-	//if (rightSpeed > 65) rightSpeed = 65;
 	
-	//float speed_min;
-	//speed_min=output;   //min 30µ½70Ö¼ä±ä£¬Ö»´¦ÀíÖ±Ïß
   if(output>=0)   //Ïò×ó×ª£¬ÓÒ¿ì£¬×óÂý
 	{
 		Motor_SetSpeed(rightSpeed); //ÓÒÂÖµç»ú
