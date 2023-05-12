@@ -2,7 +2,6 @@ import sensor, image, time, ustruct
 from pyb import UART, LED
 
 # todo: 光线环境校准是个问题，目前的设计是保存几个不同环境的阈值设置，或者加灯？
-# todo: 保障识别暂时没写
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
@@ -26,7 +25,7 @@ red_roi = (10, 10, 300, 180) # todo: 注意控制在前方一格的位置
 #red_threshold =(0, 100, 127, -128, -128, 127)
 grey_threshold =(0, 30, 10, -74, -52, 34)
 
-red_area_th=2000
+red_area_th=2000 # todo: 设置面积
 red_threshold =(0, 81, 75, 6, -4, 69)
 object=0
 cx=0x00
@@ -57,7 +56,7 @@ def sending_data(cx,cy):
                    cx,   # up sample by 4   #数据1
                    cy,   # up sample by 4    #数据2
                    0x54)
-    uart.write(data);   #必须要传入一个字节数组
+    uart.write(data);
 
 # 串口初始化
 if __name__ == '__main__':
