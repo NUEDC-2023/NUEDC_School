@@ -9,6 +9,8 @@ void display_Specs(uint8_t Cx, int Cy)
 	OLED_ShowSignedNum(2,1,Cy,3);
 }
 
+// 0b00000001(0x01) left 0b00000010(0x02) front    0b00000100(0x04) right
+// 0b00001000(0x08) trap 0b00010000(0x10) treasure 0b00000111(0x07) = 0x01|0x02|0x04
 void set_Flags(uint8_t Cx, int Cy){
 	if (Cx & 0x07) {
 		flag_cross = 1;
