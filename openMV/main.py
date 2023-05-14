@@ -8,7 +8,6 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 
-# todo: ROI 待调整
 side_th=0
 side_wide=20
 
@@ -51,10 +50,10 @@ def IMG_init():
 
 def sending_data(cx,cy):
     global uart;
-    data = ustruct.pack("<bbhb",      #格式为俩个字符俩个短整型(2字节)
-                   0x86,                      #帧头1
-                   cx,   # up sample by 4   #数据1
-                   cy,   # up sample by 4    #数据2
+    data = ustruct.pack("<bbhb",             #格式为俩个字符俩个短整型(2字节)
+                   0x86,                     #帧头1
+                   cx,                       #数据1 路径节点标志位
+                   cy,                       #数据2 巡线中心标志位
                    0x54)
     uart.write(data);
 
@@ -62,39 +61,42 @@ def sending_data(cx,cy):
 if __name__ == '__main__':
     IMG_init()
     while(True):
-        # cx - 左右识别位，cy - 中线偏差位，object - 宝藏/陷阱位
-        object = 0
+        # cx - 路径节点标志位，cy - 中线偏差位
         cy = 256
+        cx = 0
 
-        # 初始化后面发送到串口的四个值：左转线上下位置（100-400 / 0），右转线上下位置（100-400 / 0）， 正前方线段偏移（正数 0-200，100为中）， 最前方是否有线（1/0）：
-        frame_position_storage_list = [0, 0, 0, 0]
         clock.tick() # Track elapsed milliseconds between snapshots().
         img = sensor.snapshot() # 从感光芯片获得一张图像
 
+        # todo: 每条线最好加个面积过滤
         left_line_blobs = img.find_blobs([grey_threshold], merge = True, roi = left_roi)
         right_line_blobs = img.find_blobs([grey_threshold], merge = True, roi = right_roi)
         middle_line_blobs = img.find_blobs([grey_threshold], merge = True, roi = middle_roi)
-        red_blobs = img.find_blobs([red_threshold],pixels_threshold=150,roi=red_roi,area_threshold=130)
+        red_blobs = img.find_blobs([red_threshold], pixels_threshold=150, roi=red_roi, area_threshold=130)
+        front_line_blobs = img.find_blobs([grey_threshold], roi = front_roi)
 
         if red_blobs:
             b = max(red_blobs, key=lambda x: x.area())
             img.draw_circle((b.cx(), b.cy(),int((b.w()+b.h())/4)))
             if b.pixels() > red_area_th:
-                object = 1   #宝藏
+                cx = cx|bx00010000   #宝藏
             else :
-                object = 2   #陷阱
+                cx = cx|bx00001000   #陷阱
 
-        # todo: 每条线最好加个面积过滤
         if left_line_blobs:
+            # 左线
+            cx=cx|bx00000001
             b = max(left_line_blobs, key=lambda x: x.area())
-            frame_position_storage_list[0] = b[6] + 100 # 0~300 -> 100~400
+            # frame_position_storage_list[0] = b[6] + 100 # 0~300 -> 100~400
             # Draw a rect around the blob.
             img.draw_rectangle(b[0:4], color = RED, thickness = 2) # rect
             img.draw_cross(b[5], b[6], color = RED, thickness = 2) # cx, cy
 
         if right_line_blobs:
+            # 右线
+            cx=cx|bx00000100
             b = max(right_line_blobs, key=lambda x: x.area())
-            frame_position_storage_list[1] = b[6] + 100 # 0~300 -> 100~400
+            # frame_position_storage_list[1] = b[6] + 100 # 0~300 -> 100~400
             # Draw a rect around the blob.
             img.draw_rectangle(b[0:4], color = GREEN, thickness = 2) # rect
             img.draw_cross(b[5], b[6], color = GREEN, thickness = 2) # cx, cy
@@ -102,27 +104,20 @@ if __name__ == '__main__':
 
         if middle_line_blobs:
             b = max(middle_line_blobs, key=lambda x: x.area())
-            frame_position_storage_list[2] = b[5] - 220 + 10 # 220~420 -> 10~210
+            # frame_position_storage_list[2] = b[5] - 220 + 10 # 220~420 -> 10~210
             # Draw a rect around the blob.
             img.draw_rectangle(b.rect(), color = YELLOW, thickness = 2) # rect
             img.draw_cross(b[5], b[6], color = YELLOW, thickness = 2) # cx, cy
             cy=int(((b.cx()-(int)((320-midle_wide)/2))/midle_wide)*100)
             print(cy)
 
-        if left_line_blobs or right_line_blobs:
-            # 读到左/右线
-            cx=cx|0x01
-        else :
-            cx=cx&0xF0 # 原来是 0x10
+        # todo: ROI 待调整
+        if front_line_blobs:
+            # 下一段中线
+            cx=cx|bx00000010
+            b = max(front_line_blobs, key=lambda x: x.area())
 
-        if object == 1:
-            cx=cx|0x10
-        elif object == 2:
-            cx=cx|0x20
-        else :
-            cx=cx&0xF1
-
-        sending_data(cx,cy)
+        sending_data(cx, cy)
         #uart.write(str(frame_position_storage_list))
         #print(clock.fps(), "position: array", "L:", frame_position_storage_list[0], "R: ", frame_position_storage_list[1], "MID: ", frame_position_storage_list[2], "FRONT_LANE_EXSIST: ",  frame_position_storage_list[3]) # 注意: 你的OpenMV连到电脑后帧率大概为原来的一半
         #print("uart output: ", str(frame_position_storage_list))

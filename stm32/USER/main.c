@@ -10,8 +10,11 @@
 
 // Record of global varialble: 
 // OpenmvComm: 
-// 	 int Cy: For marking the centerline (possible value is 255 | 0 - 100)
-// 
+// 	 int Cy: For marking the centerline (possible value: 255 | 0 - 100)
+//
+// 	 uint8_t int Cy, flag_treasure, flag_trap, flag_left, flag_right, flag_front, flag_cross:
+//           For marking out the cross (left right front exsitance) / treasure / trap the car is passing()
+//
 
 uint8_t KeyNum;
 int8_t Speed;
