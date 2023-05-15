@@ -1,11 +1,7 @@
 #include "stm32f10x.h"                  // Device header
 #include "OpenmvComm.h"
-<<<<<<< HEAD
 #include "OLED.h"
-=======
 #include "Serial.h"
-
->>>>>>> ac293266252d357175ed9c8804c8a8157a6aac7a
 uint8_t Serial_RxData;
 uint8_t Serial_RxFlag;
 

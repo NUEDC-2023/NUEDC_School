@@ -99,8 +99,3 @@ int Track_Line(int Speed) {
 	}
 	return 1;
 }
-
-
-
-
-
