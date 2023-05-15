@@ -2,4 +2,4 @@
 #include "PID.h" 
 
 // void move(int element_flag);
-void move(int Speed);
+int Move(int Speed);
