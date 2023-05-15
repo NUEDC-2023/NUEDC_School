@@ -33,13 +33,15 @@ int main(void)
 	  //以下书写主代码
 	while(1)
 	{
-		if(start_flag == 1)
-		{
-			while(1)
-			{
-				move(60);
-			}
-		}
+		
+		Gyroscope_Date();
+//		if(start_flag == 1)
+//		{
+//			while(1)
+//			{
+//				move(60);
+//			}
+//		}
 	}
 
 	

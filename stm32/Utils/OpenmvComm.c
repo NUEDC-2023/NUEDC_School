@@ -5,8 +5,8 @@ int Cy, flag_treasure, flag_trap, flag_left, flag_right, flag_front, flag_cross;
 // Internal
 void display_Specs(uint8_t Cx, int Cy)
 {		
-	OLED_ShowBinNum(1,1,Cx,8);
-	OLED_ShowSignedNum(2,1,Cy,3);
+//	OLED_ShowBinNum(1,1,Cx,8);
+//	OLED_ShowSignedNum(2,1,Cy,3);
 }
 
 // 0b00000001(0x01) left 0b00000010(0x02) front    0b00000100(0x04) right

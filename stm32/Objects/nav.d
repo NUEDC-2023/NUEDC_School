@@ -1,0 +1,9 @@
+.\objects\nav.o: Utils\Nav.c
+.\objects\nav.o: .\Hardware\Motor.h
+.\objects\nav.o: D:\STM32\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\nav.o: .\System\Delay.h
+.\objects\nav.o: .\Hardware\PID.h
+.\objects\nav.o: Utils\OpenmvComm.h
+.\objects\nav.o: .\Hardware\Serial.h
+.\objects\nav.o: D:\STM32\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\nav.o: D:\STM32\ARM\ARMCC\Bin\..\include\stdarg.h
