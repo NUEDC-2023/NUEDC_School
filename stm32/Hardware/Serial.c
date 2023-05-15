@@ -1,5 +1,6 @@
 #include "stm32f10x.h"                  // Device header
 #include "OpenmvComm.h"
+#include "Serial.h"
 
 uint8_t Serial_RxData;
 uint8_t Serial_RxFlag;

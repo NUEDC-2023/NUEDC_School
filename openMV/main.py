@@ -11,13 +11,13 @@ YELLOW = (255, 255, 0)
 side_th=0
 side_wide=20
 
-left_roi =  (              side_th , 70, side_wide, 100)
-right_roi = (320-side_th-side_wide , 70, side_wide, 100)
+left_roi =  (              side_th , 100, side_wide, 80)
+right_roi = (320-side_th-side_wide , 100, side_wide, 80)
 
-midle_wide=200
-middle_roi = ((int)((320-midle_wide)/2), 200, midle_wide, 20)
+middle_wide=200
+middle_roi = ((int)((320-middle_wide)/2), 200, middle_wide, 20)
 
-front_roi = (0, 0, 200, 150) # todo: 注意控制在前方一格的位置
+front_roi = ((int)((320-middle_wide)/2), 0, middle_wide, 20) # todo: 注意控制在前方一格的位置
 red_roi = (10, 10, 300, 180) # todo: 注意控制在前方一格的位置
 
 #red_threshold = (36, 54, 20, 93, 2, 77)
@@ -63,7 +63,7 @@ if __name__ == '__main__':
     while(True):
         # cx - 路径节点标志位，cy - 中线偏差位
         cy = 256
-        cx = 0
+        cx = 0b00000000
 
         clock.tick() # Track elapsed milliseconds between snapshots().
         img = sensor.snapshot() # 从感光芯片获得一张图像
@@ -79,13 +79,13 @@ if __name__ == '__main__':
             b = max(red_blobs, key=lambda x: x.area())
             img.draw_circle((b.cx(), b.cy(),int((b.w()+b.h())/4)))
             if b.pixels() > red_area_th:
-                cx = cx|bx00010000   #宝藏
+                cx = cx|0b0001000   #宝藏
             else :
-                cx = cx|bx00001000   #陷阱
+                cx = cx|0b00001000   #陷阱
 
         if left_line_blobs:
             # 左线
-            cx=cx|bx00000001
+            cx=cx|0b00000001
             b = max(left_line_blobs, key=lambda x: x.area())
             # frame_position_storage_list[0] = b[6] + 100 # 0~300 -> 100~400
             # Draw a rect around the blob.
@@ -94,7 +94,7 @@ if __name__ == '__main__':
 
         if right_line_blobs:
             # 右线
-            cx=cx|bx00000100
+            cx=cx|0b00000100
             b = max(right_line_blobs, key=lambda x: x.area())
             # frame_position_storage_list[1] = b[6] + 100 # 0~300 -> 100~400
             # Draw a rect around the blob.
@@ -108,14 +108,14 @@ if __name__ == '__main__':
             # Draw a rect around the blob.
             img.draw_rectangle(b.rect(), color = YELLOW, thickness = 2) # rect
             img.draw_cross(b[5], b[6], color = YELLOW, thickness = 2) # cx, cy
-            cy=int(((b.cx()-(int)((320-midle_wide)/2))/midle_wide)*100)
-            print(cy)
+            cy=int(((b.cx()-(int)((320-middle_wide)/2))/middle_wide)*100)
 
-        # todo: ROI 待调整
         if front_line_blobs:
             # 下一段中线
-            cx=cx|bx00000010
+            cx=cx|0b00000010
             b = max(front_line_blobs, key=lambda x: x.area())
+            img.draw_rectangle(b.rect(), color = WHITE, thickness = 2) # rect
+            img.draw_cross(b[5], b[6], color = WHITE, thickness = 2) # cx, cy
 
         sending_data(cx, cy)
         #uart.write(str(frame_position_storage_list))

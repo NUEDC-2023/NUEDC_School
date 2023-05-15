@@ -139,6 +139,7 @@ extern int time;
 #define KEY_SCAN5 GPIO_ReadInputDataBit(GPIOE,GPIO_Pin_11)
 #define KEY_SCAN6 GPIO_ReadInputDataBit(GPIOE,GPIO_Pin_10)
 
+#include <stdint.h>
 
 int key_scan1(void);
 int key_scan2(void);
@@ -146,7 +147,7 @@ int key_scan3(int i);
 
 void lcd_show(void);
 void KEY_Init(void);//IO初始化
-u8 KEY_Scan(u8);  	//按键扫描函数					    
+uint8_t KEY_Scan(uint8_t);  	//按键扫描函数					    
 
 #endif
 

@@ -1,6 +1,8 @@
 #include "stm32f10x.h"
 #include "OLED.h"
 #include "Key.h"
+#include "OpenmvComm.h"
+#include "Serial.h"
 
 //按键初始化函数
 int flag_tc;
@@ -208,10 +210,11 @@ void lcd_show(void)
 	}
 	else if(flag_tc==0)
 	{
-		OLED_ShowSignedNum(1,9,11,4);
-		OLED_ShowSignedNum(2,9,12,4);
-		OLED_ShowSignedNum(3,9,13,4);
-		OLED_ShowSignedNum(4,9,14,4);
+		//OLED_ShowSignedNum(1,9,11,4);
+		//OLED_ShowSignedNum(2,9,12,4);
+		//OLED_ShowSignedNum(3,9,13,4);
+		//OLED_ShowSignedNum(4,9,14,4);
+		OpenMV_Display_Specs();
 	}
 	else if(flag_tc==1)
 	{
