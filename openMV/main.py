@@ -11,8 +11,8 @@ YELLOW = (255, 255, 0)
 side_th=0
 side_wide=20
 
-left_roi =  (              side_th , 100, side_wide, 80)
-right_roi = (320-side_th-side_wide , 100, side_wide, 80)
+left_roi =  (              side_th , 100, side_wide, 120)
+right_roi = (320-side_th-side_wide , 100, side_wide, 120)
 
 middle_wide=200
 middle_roi = ((int)((320-middle_wide)/2), 200, middle_wide, 20)
@@ -23,6 +23,7 @@ red_roi = (10, 10, 300, 180) # todo: 注意控制在前方一格的位置
 #red_threshold = (36, 54, 20, 93, 2, 77)
 #red_threshold =(0, 100, 127, -128, -128, 127)
 grey_threshold =(0, 30, 10, -74, -52, 34)
+side_area_th = 250
 
 red_area_th=2000 # todo: 设置面积
 red_threshold =(0, 81, 75, 6, -4, 69)
@@ -85,21 +86,27 @@ if __name__ == '__main__':
 
         if left_line_blobs:
             # 左线
-            cx=cx|0b00000001
             b = max(left_line_blobs, key=lambda x: x.area())
-            # frame_position_storage_list[0] = b[6] + 100 # 0~300 -> 100~400
-            # Draw a rect around the blob.
-            img.draw_rectangle(b[0:4], color = RED, thickness = 2) # rect
-            img.draw_cross(b[5], b[6], color = RED, thickness = 2) # cx, cy
+            if b.pixels() > side_area_th:
+                cx=cx|0b00000001
+                # frame_position_storage_list[0] = b[6] + 100 # 0~300 -> 100~400
+                # Draw a rect around the blob.
+                img.draw_rectangle(b[0:4], color = RED, thickness = 2) # rect
+                img.draw_cross(b[5], b[6], color = RED, thickness = 2) # cx, cy
+            else:
+                left_line_blobs = False;
 
         if right_line_blobs:
             # 右线
-            cx=cx|0b00000100
             b = max(right_line_blobs, key=lambda x: x.area())
-            # frame_position_storage_list[1] = b[6] + 100 # 0~300 -> 100~400
-            # Draw a rect around the blob.
-            img.draw_rectangle(b[0:4], color = GREEN, thickness = 2) # rect
-            img.draw_cross(b[5], b[6], color = GREEN, thickness = 2) # cx, cy
+            if b.pixels() > side_area_th:
+                cx=cx|0b00000100
+                # frame_position_storage_list[1] = b[6] + 100 # 0~300 -> 100~400
+                # Draw a rect around the blob.
+                img.draw_rectangle(b[0:4], color = GREEN, thickness = 2) # rect
+                img.draw_cross(b[5], b[6], color = GREEN, thickness = 2) # cx, cy
+            else:
+                right_line_blobs = False;
 
 
         if middle_line_blobs:

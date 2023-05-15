@@ -210,10 +210,10 @@ void OLED_Show(void)
 			OpenMV_Display_Specs();
 			break;
 		case 1:
-			y1h1_c;
-			y1h2_c;
-			y1h3_c;
-			y1h4_c;
+//			y1h1_c;
+//			y1h2_c;
+//			y1h3_c;
+//			y1h4_c;
 			break;
 	}
 }

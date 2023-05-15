@@ -32,7 +32,7 @@ void Motor_SetSpeed(int8_t Speed)  //摄像头朝向为正方向，right wheel
 	}
 	else
 	{
-		GPIO_ResetBits(GPIOA, GPIO_Pin_11);
+		GPIO_SetBits(GPIOA, GPIO_Pin_11);
 		GPIO_SetBits(GPIOD, GPIO_Pin_9);
 		GPIO_ResetBits(GPIOA, GPIO_Pin_8);
 		PWM_SetCompare3(-Speed);

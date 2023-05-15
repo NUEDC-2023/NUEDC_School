@@ -3,6 +3,7 @@
 #include "PID.h"
 #include "Serial.h"
 #include "Nav.h"
+#include "OLED.h"
 
 //void move (int element_flag)     //要求摄像头检测到不同多路口时返回不同的值，并及时清零
 // {
@@ -38,10 +39,12 @@
 //   }
 //}
 
-void Move(int speed) // Temporary movement logic for straight line following
+int Move(int speed) // Temporary movement logic for straight line following
 {
 	if(!Track_Line(speed)) {
 		//routing logic
-		Turn_Left(); //Temp turning left
-	};
+		Stop(); //Temp turning left
+		return 1;
+	}
+	return 0;
 }

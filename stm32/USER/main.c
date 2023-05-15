@@ -33,12 +33,15 @@ int main(void)
 	  //以下书写主代码
 	while(1)
 	{
-		OLED_Show();
 		if(start_flag == 1)
 		{
 			while(1)
 			{
-				Move(60);
+				OLED_Show();
+				//Turn_Left();
+				if(Move(30)){
+					break;
+				}
 			}
 		}
 	}

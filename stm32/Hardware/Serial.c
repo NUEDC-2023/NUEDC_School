@@ -1,6 +1,7 @@
 #include "stm32f10x.h"                  // Device header
 #include "OpenmvComm.h"
 #include "Serial.h"
+#include "Delay.h"
 
 uint8_t Serial_RxData;
 uint8_t Serial_RxFlag;
@@ -52,6 +53,7 @@ void Serial_Gyroscope_Init(void)   //陀螺仪的 串口  32's  PA9 is TX, PA10 is RX
 //STM32 的PD5为TX 和PD6为RX  (需要重定义功能) ----openmv    5，6都是usart2   
 void Serial_Openmv_Init(void)   //Opemmv 的串口
 {
+	Delay_ms(5000);
 	//USART,PD5-TX,PD6-RX
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2,ENABLE);
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD,ENABLE);
