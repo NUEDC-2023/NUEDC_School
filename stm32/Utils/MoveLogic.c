@@ -38,7 +38,10 @@
 //   }
 //}
 
-void move(int speed) // Temporary movement logic for straight line following
+void Move(int speed) // Temporary movement logic for straight line following
 {
-	Control(speed); // 50 is the total moving speed.
+	if(!Track_Line(speed)) {
+		//routing logic
+		Turn_Left(); //Temp turning left
+	};
 }

@@ -12,7 +12,7 @@
 // OpenmvComm: 
 // 	 int Cy: For marking the centerline (possible value: 255 | 0 - 100)
 //
-// 	 uint8_t int Cy, flag_treasure, flag_trap, flag_left, flag_right, flag_front, flag_cross:
+// 	 uint8_t int Cy, flag_treasure, flag_trap, flag_left, flag_right, flag_front, flag_turn:
 //           For marking out the cross (left right front exsitance) / treasure / trap the car is passing()
 //
 
@@ -33,14 +33,14 @@ int main(void)
 	  //以下书写主代码
 	while(1)
 	{
-		lcd_show();
-//		if(start_flag == 1)
-//		{
-//			while(1)
-//			{
-//				move(60);
-//			}
-//		}
+		OLED_Show();
+		if(start_flag == 1)
+		{
+			while(1)
+			{
+				Move(60);
+			}
+		}
 	}
 
 	

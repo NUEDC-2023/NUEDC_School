@@ -89,7 +89,7 @@ void Serial_Openmv_Init(void)   //Opemmv 的串口
 	USART_ClearFlag(USART2, USART_FLAG_TC);    
 }
 
-uint8_t Cx=0;
+uint8_t _Cx=0;  //This is not where Cx is declared as global variable! _Cx for temporary usage.
 int RxState = 0;	
 //USART2 全局中断服务函数 - openMV RX reading opration included for now, bit shitpile here, lack one layer of implementation(OpenMV_Comm.c).
 void USART2_IRQHandler(void)			 
@@ -118,7 +118,7 @@ void USART2_IRQHandler(void)
 					{
 						RxState=2;
 						RxFlag1=1;
-						Cx=RxBuffer1[1];
+						_Cx=RxBuffer1[1];
 						Cy=RxBuffer1[2]|(RxBuffer1[3]<<8);
 					}
 				}
@@ -129,7 +129,7 @@ void USART2_IRQHandler(void)
 									USART_ITConfig(USART2,USART_IT_RXNE,DISABLE);
 									if(RxFlag1)
 									{
-										OpenMV_On_Recieve(Cx, Cy);
+										OpenMV_On_Recieve(_Cx, Cy);
 									}
 									RxFlag1 = 0;
 									RxCounter1 = 0;

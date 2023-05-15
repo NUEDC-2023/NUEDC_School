@@ -5,14 +5,14 @@
 #include "Serial.h"
 
 //按键初始化函数
-int flag_tc;
+int flag_page;
 int point=1;
 int time;
 void KEY_Init(void) //IO初始化
 { 
 	GPIO_InitTypeDef GPIO_InitStructure;
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOE,ENABLE);  //使能PE,PC时钟
-	GPIO_InitStructure.GPIO_Pin  =GPIO_Pin_12|GPIO_Pin_11|GPIO_Pin_10;             
+	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_12|GPIO_Pin_11|GPIO_Pin_10;             
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD; 		 //设置成上拉输入
 	GPIO_Init(GPIOE, &GPIO_InitStructure);						 
 	
@@ -77,21 +77,20 @@ int key_scan3(int i)
 	{
 		case 0:return 0;
 		
-		case 1:{flag_tc--;break;}//上一页
+		case 1:{flag_page--;break;}//上一页
 		case 2:{point--;break;}//上
-		case 3:{flag_tc++;break;}//下一页
+		case 3:{flag_page++;break;}//下一页
 		case 8:{point++;break;}//下
 		
 		// case 9:{start2=1;break;}//启动时依旧执行按键扫描，未按下启动时关闭按键扫描
 		case 7://帧率显示
 		{
 			lcd_showstr(32,3,5,"frame");
-			//lcd_showint8(48, 7, frame1);
 			break;
 		}
 		default://左右进行变量增减
 		{
-			switch (flag_tc)
+			switch (flag_page)
 			{
 				case 0://第0页
 				{
@@ -184,7 +183,7 @@ int key_scan3(int i)
 	}
 	return 1;
 }
-void lcd_show(void)
+void OLED_Show(void)
 {
 	static int start=0;
 	if(start==0)
@@ -204,25 +203,18 @@ void lcd_show(void)
 	}
 	else flag1=i;
 	
-	if(flag_tc==-1)
-	{
-		
-	}
-	else if(flag_tc==0)
-	{
-		//OLED_ShowSignedNum(1,9,11,4);
-		//OLED_ShowSignedNum(2,9,12,4);
-		//OLED_ShowSignedNum(3,9,13,4);
-		//OLED_ShowSignedNum(4,9,14,4);
-		OpenMV_Display_Specs();
-	}
-	else if(flag_tc==1)
-	{
-		y1h1_c;
-		y1h2_c;
-		y1h3_c;
-		y1h4_c;
-		
+	switch(flag_page) {
+		case -1:
+			break;
+		case 0:
+			OpenMV_Display_Specs();
+			break;
+		case 1:
+			y1h1_c;
+			y1h2_c;
+			y1h3_c;
+			y1h4_c;
+			break;
 	}
 }
 
