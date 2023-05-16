@@ -38,10 +38,7 @@ int main(void)
 			while(1)
 			{
 				OLED_Show();
-				//Turn_Left();
-				if(Move(30)){
-					break;
-				}
+				//if(Move(30)) break;
 			}
 		}
 	}

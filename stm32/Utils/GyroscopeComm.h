@@ -9,7 +9,7 @@ extern float pitch_holder, yaw_holder, roll_holder;
 extern float ring,ring2;
 extern float T;
 
-void Gyroscope_On_Recieve(unsigned char Recv_buf[]);
+void Gyroscope_On_Recieve(void);
 void Init_Gyro_Data(void);
 void Gyroscope_Display_Specs(void);
 	

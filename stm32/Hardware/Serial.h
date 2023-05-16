@@ -6,6 +6,8 @@
 #include <stdarg.h>
 
 extern int RxState;	
+extern unsigned char sign;
+extern unsigned char data_buffer[11], Recv_buf[11];
 
 void Serial_Gyroscope_Init(void);
 void Serial_Openmv_Init(void);

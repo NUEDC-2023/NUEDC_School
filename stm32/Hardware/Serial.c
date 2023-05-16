@@ -1,7 +1,11 @@
 #include "stm32f10x.h"                  // Device header
 #include "OpenmvComm.h"
+#include "GyroscopeComm.h"
 #include "OLED.h"
 #include "Serial.h"
+#include "Delay.h"
+#include "String.h"
+
 uint8_t Serial_RxData;
 uint8_t Serial_RxFlag;
 
@@ -47,9 +51,9 @@ void Serial_Gyroscope_Init(void)   //陀螺仪的 串口  32's  PA9 is TX, PA10 is RX
 }
 
 //usart1 中断服务函数
-unsigned char Recv_buf[11];
-int counter;
 unsigned char data_buffer[11];
+unsigned char Recv_buf[11], sign;
+int counter;
 void USART1_IRQHandler(void) 
 {
 	if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)  
@@ -62,9 +66,9 @@ void USART1_IRQHandler(void)
 		if(counter==11)
 		{ 
 			memcpy(Recv_buf,data_buffer,11);
-			Gyroscope_On_Recieve(Recv_buf);
+			sign=1; 
+			Gyroscope_On_Recieve();
 			counter=0; 
-			// sign=1; //? Reading lock? No need.
 		}
 	}
 }
