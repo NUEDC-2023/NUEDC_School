@@ -6,7 +6,7 @@
 
 extern float pitch,roll,yaw;
 extern float pitch_holder, yaw_holder, roll_holder;
-extern float ring,ring2;
+extern float ring;
 extern float T;
 
 void Gyroscope_On_Recieve(void);

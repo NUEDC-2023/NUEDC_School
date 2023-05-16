@@ -11,7 +11,6 @@ uint8_t Serial_RxFlag;
 
 void Serial_Gyroscope_Init(void)   //ÍÓÂÝÒÇµÄ ´®¿Ú  32's  PA9 is TX, PA10 is RX
 {
-	Delay_ms(1000);
 	Init_Gyro_Data();
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);

@@ -3,7 +3,7 @@
 
 float pitch,roll,yaw;
 float pitch_holder, yaw_holder, roll_holder;
-float ring=0,ring2=0;
+float ring=0;
 float T;
 
 //Internal
@@ -11,8 +11,8 @@ float T;
 static void ring_check_holder(void)
 {
   static float roll_holder_last;
-	if(roll_holder_last>=1200&&roll<=-1020) ring2++;
-  if(roll_holder_last<=-1200&&roll>=1200) ring2--;
+	if(roll_holder_last>=120&&roll<=-120) ring++;
+  if(roll_holder_last<=-120&&roll>=120) ring--;
   roll_holder_last=roll;
 }
 
@@ -20,11 +20,11 @@ static void ring_check_holder(void)
 void Gyroscope_Display_Specs()
 {
 	OLED_ShowString(1,1,"Gyro roll:");
-	OLED_ShowSignedNum(4,1,roll,6);
+	OLED_ShowSignedNum(2, 3, roll_holder, 10);
 }
 
 void Init_Gyro_Data(){
-	ring=0; ring2=0; pitch_holder=0; yaw_holder=0; roll_holder=0; pitch=0; roll=0; yaw=0;
+	ring=0; pitch_holder=0; yaw_holder=0; roll_holder=0; pitch=0; roll=0; yaw=0;
 }
 
 void Gyroscope_On_Recieve()
@@ -61,9 +61,9 @@ void Gyroscope_On_Recieve()
 	   	}
 	   	pitch_holder=-10*angle[1];//角度
 	   	yaw_holder=10*angle[0];//航向角度
-	   	roll=10*angle[2];//航向角，只需要用这个
+	   	roll=angle[2];//航向角，只需要用这个
 	   	ring_check_holder();
-			roll_holder=roll+3600*ring2;
+			roll_holder=roll+360*ring;
 		}
 	}
 }
