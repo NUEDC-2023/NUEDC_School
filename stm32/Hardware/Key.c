@@ -2,6 +2,7 @@
 #include "OLED.h"
 #include "Key.h"
 #include "OpenmvComm.h"
+#include "GyroscopeComm.h"
 #include "Serial.h"
 
 //按键初始化函数
@@ -210,11 +211,12 @@ void OLED_Show(void)
 			OpenMV_Display_Specs();
 			break;
 		case 1:
+			Gyroscope_Display_Specs();
+			break;
 //			y1h1_c;
 //			y1h2_c;
 //			y1h3_c;
 //			y1h4_c;
-			break;
 	}
 }
 

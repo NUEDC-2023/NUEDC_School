@@ -7,6 +7,8 @@ uint8_t Serial_RxFlag;
 
 void Serial_Gyroscope_Init(void)   //陀螺仪的 串口  32's  PA9 is TX, PA10 is RX
 {
+	Delay_ms(1000);
+	Init_Gyro_Data();
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 	
@@ -45,100 +47,27 @@ void Serial_Gyroscope_Init(void)   //陀螺仪的 串口  32's  PA9 is TX, PA10 is RX
 }
 
 //usart1 中断服务函数
+unsigned char Recv_buf[11];
 int counter;
-unsigned char Re_buf[11],temp_buf[11];
-unsigned char sign,t,he;
-static unsigned char Temp[11];
-
+unsigned char data_buffer[11];
 void USART1_IRQHandler(void) 
+{
+	if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)  
 	{
-    if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)  
-    {
-        USART_ClearITPendingBit(USART1, USART_IT_RXNE);  
-				//Usart_SendByte(UART8,Usart6_Rx);
-
-					Temp[counter] = USART_ReceiveData(USART1);   
-								//Usart_SendByte(UART8,Temp[counter]);
-
-					//??????
-					//if(counter == 0 && Re_buf[0] != 0x55) return;      //
-				if(counter == 0 && Temp[0] != 0x55) return;      //?
-					counter++; 
-					if(counter==11) //??? 11 ???
-					{ 
-						 memcpy(Re_buf,Temp,11);
-						 counter=0; 
-						 sign=1;
-					}
-    }
+		USART_ClearITPendingBit(USART1, USART_IT_RXNE);  
+		//Usart_SendByte(UART8,Usart6_Rx);
+		data_buffer[counter] = USART_ReceiveData(USART1);   
+		if(counter == 0 && data_buffer[0] != 0x55) return;     
+		counter++; 
+		if(counter==11)
+		{ 
+			memcpy(Recv_buf,data_buffer,11);
+			Gyroscope_On_Recieve(Recv_buf);
+			counter=0; 
+			// sign=1; //? Reading lock? No need.
+		}
+	}
 }
-
-
-
-float a[3],w[3],angle[3],T;
-float fAcc[3], fGyro[3], fAngle[3];
-float ring=0;
-float ring2=0;
-float pitch,roll,yaw;
-float pitch2,roll2,yaw2;
-float pitch_holder;
-float yaw_holder;
-float roll_holder;
-
-//转圈圈函数
-void ring_check_holder(void)
-{
-		static float roll_holder_last;
-	 if(roll_holder_last>=1200&&roll2<=-1020)ring2++;
-   if(roll_holder_last<=-1200&&roll2>=1200)ring2--;
-   roll_holder_last=roll2;
-}
-
-
-//
-void  Gyroscope_Date(void)
-{
-   if(sign)
-      {
-         memcpy(Temp,Re_buf,11);
-         sign=0;
-         if(Re_buf[0]==0x55)       //检查帧头
-         {
-            switch(Re_buf[1])
-            {
-               case 0x51: //这个包是加速度包
-                  a[0] = ((short)(Temp[3]<<8 | Temp[2]))/32768.0*16;      //X轴加速度
-                  a[1] = ((short)(Temp[5]<<8 | Temp[4]))/32768.0*16;      //Y轴加速度
-                  a[2] = ((short)(Temp[7]<<8 | Temp[6]))/32768.0*16;      //Z轴加速度
-                  T    = ((short)(Temp[9]<<8 | Temp[8]))/340.0+36.25;      //温度
-                  break;
-               case 0x52: //标识这个包是角速度包
-                  w[0] = ((short)(Temp[3]<<8| Temp[2]))/32768.0*2000;     //X轴角速度
-                  w[1] = ((short)(Temp[5]<<8| Temp[4]))/32768.0*2000;      //Y轴角速度
-                  w[2] = ((short)(Temp[7]<<8| Temp[6]))/32768.0*2000;      //Z轴角速度
-                  T    = ((short)(Temp[9]<<8| Temp[8]))/340.0+36.25;      //温度
-                  break;
-               case 0x53: //标识这个包是角度包
-                  angle[0] = ((short)(Temp[3]<<8| Temp[2]))/32768.0*180;   //X轴滚转角
-                  angle[1] = ((short)(Temp[5]<<8| Temp[4]))/32768.0*180;   //Y轴滚转角
-                  angle[2] = ((short)(Temp[7]<<8| Temp[6]))/32768.0*180;   //Z轴偏航角
-                  T        = ((short)(Temp[9]<<8| Temp[8]))/340.0+36.25;   //温度
-                  //printf("X轴角度:%.2f   Y轴角度:%.2f   Z轴角度:%.2f\r\n",angle[0],angle[1],angle[2]);
-                  break;
-               default:  break;
-            }
-						pitch_holder=-10*angle[1];//角度
-						yaw_holder=10*angle[0];//航向角度，只需要用这个
-						roll2=10*angle[2];//航向角
-						ring_check_holder();//数据处理
-						roll_holder=roll2+3600*ring2;
-			//printf("X??:%.2f  Y??:%.2f  Z??:%.2f  X??:%.2f  Y??:%.2f  Z??:%.2f\r\n",angle[0],angle[1],angle[2],w[0],w[1],w[2]);
-         }
-      }
-      //OLED_ShowBinNum(3,1,pitch_holder*10,4);
-	    OLED_ShowSignedNum(4,1,yaw_holder*10,3);
-}
-
 
 
 //以下为openmv的串口通信部分
