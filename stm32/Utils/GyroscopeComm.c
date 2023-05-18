@@ -1,5 +1,6 @@
 #include "GyroscopeComm.h"
 #include "String.h"
+#include "Delay.h"
 
 float pitch,roll,yaw;
 float pitch_holder, yaw_holder, roll_holder;
@@ -19,12 +20,22 @@ static void ring_check_holder(void)
 //Public
 void Gyroscope_Display_Specs()
 {
-	OLED_ShowString(1,1,"Gyro roll:");
+	OLED_ShowString(1,1,"Gyro roll_t,roll:");
 	OLED_ShowSignedNum(2, 3, roll_holder, 10);
+	OLED_ShowSignedNum(3, 3, roll, 10);
 }
 
 void Init_Gyro_Data(){
+	//todo: Don't know how to reset gyro data.
+	OLED_Clear();
+	OLED_ShowString(1, 1, "Resetting Gyro...");
 	ring=0; pitch_holder=0; yaw_holder=0; roll_holder=0; pitch=0; roll=0; yaw=0;
+	Delay_ms(200);
+	OLED_Clear();
+	OLED_ShowString(1, 1, "Done.");
+	OLED_ShowNum(2, 1, ring+roll_holder+roll, 2);
+	Delay_ms(500);
+	OLED_Clear();
 }
 
 void Gyroscope_On_Recieve()
