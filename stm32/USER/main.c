@@ -37,7 +37,7 @@ int main(void)
 		OLED_Show();
 		if(start_flag == 1)
 		{
-			if(Move(50)) break;
+			if(Move_Q1(50)) break;
 		}
 	}
 

@@ -49,7 +49,6 @@ void Stop(void)
 // Turning control
 void Go_Straight(int speed)
 {
-	
 	Motor_SetSpeed(speed);
 	Motor_SetSpeed2(speed);
 }
@@ -104,12 +103,19 @@ void Turn_180(void)
 {
 	Motor_SetSpeed(-20);
 	Motor_SetSpeed2(20);
-	Delay_ms(2000);
+	float start_roll = roll_holder;
+	while(1)
+	{
+		if (roll_holder - start_roll >= 170) 
+		{
+			break;
+		}
+	}
 	Stop();
 }
 
 int Track_Line(int Speed) {
-
+	//todo:! Stop for a new point when no front line is detected.
 	if (flag_turn == 1){
 		int temp_left_flag = flag_left, temp_right_flag = flag_right;
 		//For better detection.
