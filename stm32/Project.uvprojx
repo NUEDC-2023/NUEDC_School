@@ -810,6 +810,16 @@
               <FileType>5</FileType>
               <FilePath>.\Utils\OpenmvComm.h</FilePath>
             </File>
+            <File>
+              <FileName>GyroscopeComm.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Utils\GyroscopeComm.h</FilePath>
+            </File>
+            <File>
+              <FileName>GyroscopeComm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Utils\GyroscopeComm.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

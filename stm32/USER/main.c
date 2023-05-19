@@ -18,33 +18,31 @@
 
 uint8_t KeyNum;
 int8_t Speed;
+uint8_t start_flag = 1; //起始标志位
 
 int main(void)
 {
-	uint8_t start_flag = 1; //起始标志位
 	//uint8_t element_flag=0; //元素标志位 0正常巡线，1到7 7个多路口  8停止标志位
 	
+	Delay_ms(3000); //Omv start up
 	OLED_Init();  //屏幕初始化
 	Motor_Init(); //电机初始化
 	KEY_Init();   //按键初始化
 	Serial_Gyroscope_Init(); //陀螺仪串口通信初始化
 	Serial_Openmv_Init();	//Openmv串口通信初始化
 	
-	  //以下书写主代码
+	//以下书写主代码
 	while(1)
 	{
+		OLED_Show();
 		if(start_flag == 1)
 		{
-			while(1)
-			{
-				OLED_Show();
-				//Turn_Left();
-				if(Move(30)){
-					break;
-				}
-			}
+			if(Move_Q1(50)) break;
 		}
 	}
+
+	OLED_Clear();
+	OLED_ShowString(1, 1, "Prgm ended...");
 
 	
 	
