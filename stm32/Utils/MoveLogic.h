@@ -1,10 +1,10 @@
 #include "Nav.h"
 #include "PID.h" 
 
-#define MAP_UP 0
-#define MAP_RIGHT 1
+#define MAP_UP 4
+#define MAP_RIGHT 3
 #define MAP_DOWN 2
-#define MAP_LEFT -1
+#define MAP_LEFT 1
 
 #define TURN_RIGHT 1 // -3 when calculating
 #define TURN_LEFT -1 //  3 when calculating

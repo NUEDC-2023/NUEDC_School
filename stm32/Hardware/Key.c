@@ -4,6 +4,7 @@
 #include "OpenmvComm.h"
 #include "GyroscopeComm.h"
 #include "Serial.h"
+#include "MoveLogic.h"
 
 //按键初始化函数
 int flag_page;

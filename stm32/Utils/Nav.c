@@ -9,7 +9,7 @@
 
 //Internal:
 //Ñ²Ïß´úÂë
-void line_track(int Speed){
+static void line_track(int Speed){
 	// Easier to grab when visual rec is out of control.
 	if (Cy == 255) 
 	{
@@ -105,7 +105,7 @@ void Turn_Left(void)
 		}
 	}
 	Stop();
-	cur_direction = cur_direction - 1;
+	cur_direction = cur_direction - 1; //todo: Robustness decreased, as the direction is ddicated by turning rather than real heading.
 	cur_direction = Correct_Direction(cur_direction);
 }
 void Turn_180(void)

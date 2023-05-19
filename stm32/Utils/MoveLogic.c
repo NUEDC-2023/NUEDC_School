@@ -43,7 +43,7 @@ static int get_Turn_Direction(int cur_point, int next_point)
 	}
 
 	//calc. turning direction:
-	int direction = next_direction - cur_direction ;
+	int direction = cur_direction - next_direction ;
 	direction = Correct_Direction(direction);
 	return direction;
 }
@@ -63,9 +63,9 @@ int Correct_Direction(int direction)
 	}
 }
 
+int cur_point = 1;
 int Move_Q1(int speed)
 {
-	int cur_point = 0;
 	if(!Track_Line(speed)) {
 		//routing logic
 		if (cur_point == 8) //todo:! Change this, this is not the right way to detect the end point.

@@ -37,40 +37,11 @@ int main(void)
 		OLED_Show();
 		if(start_flag == 1)
 		{
-			if(Move_Q1(50)) break;
+			if(Move_Q1(50)) //CHANGE PID IF CHANGE THIS
+				break;
 		}
 	}
 
 	OLED_Clear();
 	OLED_ShowString(1, 1, "Prgm ended...");
-
-	
-	
-//	OLED_ShowString(1, 1, "Speed:");
-//	Motor_SetSpeed(60);
-//	Motor_SetSpeed2(60);
-//	while (1)
-//	{
-//		if (Serial_GetRxFlag() == 1)
-//		{
-//			RxData = Serial_GetRxData();
-//			Serial_SendByte(RxData);
-//			OLED_ShowHexNum(1, 8, RxData, 2);
-//		}
-//	}
-//	while (1)
-//	{
-//		KeyNum = Key_GetNum();
-//		if (KeyNum == 1)
-//		{
-//			Speed += 20;
-//			if (Speed > 100)
-//			{
-//				Speed = -100;
-//			}
-//		}
-//		Motor_SetSpeed(Speed);
-//		OLED_ShowSignedNum(1, 7, Speed, 3);
-//	}
-//	
 }
