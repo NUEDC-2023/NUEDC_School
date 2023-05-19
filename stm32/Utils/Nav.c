@@ -5,6 +5,7 @@
 #include "GyroscopeComm.h"
 #include "Nav.h"
 #include "OLED.h"
+#include "MoveLogic.h"
 
 //Internal:
 //Ñ²Ïß´úÂë
@@ -58,6 +59,8 @@ int delay_time = 600;
 int foward_speed = 20;
 void Detection_Turn_Left(void)
 {
+	OLED_Clear();
+	OLED_ShowString(1, 1, "Detection_Turn_Left...");
 	Go_Straight(foward_speed);
 	Delay_ms(delay_time);
 	Turn_Left();
@@ -65,6 +68,8 @@ void Detection_Turn_Left(void)
 
 void Detection_Turn_Right(void)
 {
+	OLED_Clear();
+	OLED_ShowString(1, 1, "Detection_Turn_Right...");
 	Go_Straight(foward_speed);
 	Delay_ms(delay_time);
 	Turn_Right();
@@ -77,12 +82,14 @@ void Turn_Right(void)
 	float start_roll = roll_holder;
 	while(1)
 	{
-		if (start_roll - roll_holder >= 78) 
+		if (start_roll - roll_holder >= 83) 
 		{
 			break;
 		}
 	}
 	Stop();
+	cur_direction = cur_direction +1;
+	cur_direction = Correct_Direction(cur_direction);
 }
 
 void Turn_Left(void)
@@ -92,12 +99,14 @@ void Turn_Left(void)
 	float start_roll = roll_holder;
 	while(1)
 	{
-		if (roll_holder - start_roll >= 78) 
+		if (roll_holder - start_roll >= 83) 
 		{
 			break;
 		}
 	}
 	Stop();
+	cur_direction = cur_direction - 1;
+	cur_direction = Correct_Direction(cur_direction);
 }
 void Turn_180(void)
 {
@@ -124,8 +133,17 @@ int Track_Line(int Speed) {
 		if (flag_front + flag_left + flag_right >= 2) {
 			//for making sure
 			Delay_ms(10);
-			if (flag_front + flag_left + flag_right >= 2) return 0;  //cross.
-			else return 1;
+			if (flag_front + flag_left + flag_right >= 2) {
+				//todo: Delete this, debug only
+				Stop();
+				OLED_Clear();
+				OLED_ShowString(1, 1, "Turn detected..");
+				OLED_ShowNum(2, 1, flag_left, 1);
+				OLED_ShowNum(2, 3, flag_front, 1);
+				OLED_ShowNum(2, 5, flag_right, 1);
+				Delay_ms(5000);
+				return 0;
+			} else return 1;
 		} else {
 			//Car is going straight now.			
 			if (temp_left_flag) {

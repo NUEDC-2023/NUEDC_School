@@ -206,6 +206,7 @@ void OLED_Show(void)
 	
 	switch(flag_page) {
 		case -1:
+			Move_Logic_Display();
 			break;
 		case 0:
 			OpenMV_Display_Specs();

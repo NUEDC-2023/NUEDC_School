@@ -7,6 +7,18 @@
 #include "OLED.h"
 #include "GyroscopeComm.h"
 
+int cur_direction = MAP_LEFT;
+int Info_Map[MAP_SIZE][MAP_CONTENT_SIZE] = 
+{
+	{1, 2, MAP_DOWN},
+	{2, 3, MAP_LEFT},
+	{3, 4, MAP_LEFT},
+	{4, 5, MAP_DOWN},
+	{5, 6, MAP_LEFT},
+	{6, 7, MAP_DOWN},
+	{7, 8, MAP_LEFT}
+};
+
 static int search_Q1_Next_Point(int current_point)
 {
 	return current_point +1;
@@ -14,7 +26,7 @@ static int search_Q1_Next_Point(int current_point)
 
 static int get_Turn_Direction(int cur_point, int next_point)
 {
-	int next_direction, cur_direction;
+	int next_direction;
 	//search through the map
 	for(int i = 0; i < MAP_SIZE; i++)
 	{
@@ -29,13 +41,15 @@ static int get_Turn_Direction(int cur_point, int next_point)
 		next_direction = Info_Map[i][2];
 		break;
 	}
-	
-	//get cur direction.
-	//todo:! How does this work, which indecates which?
-	if (roll > 0){}
-	
+
 	//calc. turning direction:
-	int direction = cur_direction - next_direction;
+	int direction = next_direction - cur_direction ;
+	direction = Correct_Direction(direction);
+	return direction;
+}
+
+int Correct_Direction(int direction)
+{
 	switch(direction)
 	{
 		case _TURN_LEFT:
@@ -47,8 +61,6 @@ static int get_Turn_Direction(int cur_point, int next_point)
 		default:
 			return direction;
 	}
-	
-	return 0;
 }
 
 int Move_Q1(int speed)
@@ -63,10 +75,14 @@ int Move_Q1(int speed)
 		}
 		else 
 		{
-			Stop();
-			Delay_ms(200);
 			int next_point = search_Q1_Next_Point(cur_point);
 			int turn = get_Turn_Direction(cur_point, next_point);
+			Stop();
+			OLED_Clear();
+			OLED_ShowString(1, 1, "Point!!!(Cur)");
+			OLED_ShowNum(2, 1, cur_point, 2);	OLED_ShowString(2, 3, "->");OLED_ShowNum(2, 7, next_point, 3);	
+			OLED_ShowSignedNum(3, 1, turn, 3);
+			Delay_ms(3000); //todo: change this back for relaease.
 			switch(turn)
 			{
 				case TURN_RIGHT:
@@ -76,6 +92,8 @@ int Move_Q1(int speed)
 				case TURN_BACK:
 					Turn_180();
 				case TURN_AHEAD:
+					OLED_Clear();
+					OLED_ShowString(1, 1, "TURN_AHEAD...");
 					Go_Straight(20);
 					Delay_ms(500);
 			}
@@ -93,4 +111,10 @@ int Move(int speed) // Temporary movement logic for straight line following
 		return 1;
 	}
 	return 0;
+}
+void Move_Logic_Display()
+{
+	OLED_Clear();
+	OLED_ShowString(1, 1, "Cur Direction: ");
+	OLED_ShowSignedNum(2, 3, cur_direction, 3);
 }

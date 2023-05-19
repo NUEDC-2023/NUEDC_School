@@ -6,18 +6,21 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 
-side_th=0
+side_th=20
 side_wide=20
 
 middle_wide=200
+front_wide = 80
 
 left_roi =  (			  side_th , 170, side_wide, 120)
 right_roi = (320-side_th-side_wide , 170, side_wide, 120)
 middle_roi = ((int)((320-middle_wide)/2), 200, middle_wide, 20)
-front_roi = ((int)((320-middle_wide)/2), 0, middle_wide, 20)
+front_roi = ((int)((320-front_wide)/2), 80, front_wide , 20)
 red_roi = (10, 10, 300, 180)
 
-grey_threshold =(0, 30, 10, -74, -52, 34)
+# grey_threshold =(0, 30, 10, -74, -52, 34)
+grey_new_threshold = (21, 40, -10, 37, -21, 17)
+front_grey_threshold = (45, 60, -15, 15, -20, 0)
 red_threshold =(0, 81, 75, 6, -4, 69)
 
 side_area_th = 250
@@ -61,11 +64,11 @@ if __name__ == '__main__':
         clock.tick()
         img = sensor.snapshot()
 
-        left_line_blobs = img.find_blobs([grey_threshold], merge = True, roi = left_roi)
-        right_line_blobs = img.find_blobs([grey_threshold], merge = True, roi = right_roi)
-        middle_line_blobs = img.find_blobs([grey_threshold], merge = True, roi = middle_roi)
+        left_line_blobs = img.find_blobs([grey_new_threshold], merge = True, roi = left_roi)
+        right_line_blobs = img.find_blobs([grey_new_threshold], merge = True, roi = right_roi)
+        middle_line_blobs = img.find_blobs([grey_new_threshold], merge = True, roi = middle_roi)
         red_blobs = img.find_blobs([red_threshold], pixels_threshold=150, roi=red_roi, area_threshold=130)
-        front_line_blobs = img.find_blobs([grey_threshold], roi = front_roi)
+        front_line_blobs = img.find_blobs([front_grey_threshold], roi = front_roi)
 
         if red_blobs:
             b = max(red_blobs, key=lambda x: x.area())
