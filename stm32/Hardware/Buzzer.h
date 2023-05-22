@@ -1,9 +1,10 @@
-#ifndef __BUZZER_H
-#define __BUZZER_H	 
-#define BUZZERPORT	GPIOB	//??IO??
-#define BUZZER	GPIO_Pin_5	//??IO??
+#ifndef __BEEP_H
+#define __BEEP_H
 
-void BUZZER_Init(void);
+//#define BEEP PDout(10)	// PD10  =1²»Ïì     =0:Ïì
+
+void BEEP_Init(void);
 void BUZZER_2Sec(void);
-void MIDI_PLAY(void);                    
 #endif
+
+
