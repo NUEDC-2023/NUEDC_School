@@ -1,6 +1,10 @@
-float kp=1;
-float ki=0.2;
-float kd=6;
+//float kp=1.2;
+//float ki=0.20;
+//float kd=8	;
+
+float kp=4;
+float ki=0.18;
+float kd=6.0;
 
 float pid_cal(int input,int measure)
 {

@@ -43,8 +43,17 @@ static int get_Turn_Direction(int cur_point, int next_point)
 	}
 
 	//calc. turning direction:
-	int direction = next_direction - cur_direction ;
+	int direction = cur_direction - next_direction ;
 	direction = Correct_Direction(direction);
+	//delete this, debug only:
+//	Stop();
+//	OLED_Clear();
+//	OLED_ShowString(1, 1, "Point!!!(Cur)");
+//	OLED_ShowNum(2, 1, cur_point, 2);	OLED_ShowString(2, 3, "->");OLED_ShowNum(2, 7, next_point, 3);	
+//	OLED_ShowSignedNum(3, 1, cur_direction, 2);	OLED_ShowString(3, 3, "->");OLED_ShowSignedNum(3, 7, next_direction, 3);	
+//	OLED_ShowSignedNum(4, 1, direction, 3);
+//	Delay_ms(1000);
+	
 	return direction;
 }
 
@@ -63,9 +72,9 @@ int Correct_Direction(int direction)
 	}
 }
 
+int cur_point = 1;
 int Move_Q1(int speed)
 {
-	int cur_point = 0;
 	if(!Track_Line(speed)) {
 		//routing logic
 		if (cur_point == 8) //todo:! Change this, this is not the right way to detect the end point.
@@ -77,25 +86,23 @@ int Move_Q1(int speed)
 		{
 			int next_point = search_Q1_Next_Point(cur_point);
 			int turn = get_Turn_Direction(cur_point, next_point);
-			Stop();
-			OLED_Clear();
-			OLED_ShowString(1, 1, "Point!!!(Cur)");
-			OLED_ShowNum(2, 1, cur_point, 2);	OLED_ShowString(2, 3, "->");OLED_ShowNum(2, 7, next_point, 3);	
-			OLED_ShowSignedNum(3, 1, turn, 3);
-			Delay_ms(3000); //todo: change this back for relaease.
 			switch(turn)
 			{
 				case TURN_RIGHT:
 					Detection_Turn_Right();
+					break;
 				case TURN_LEFT:
 					Detection_Turn_Left();
+					break;
 				case TURN_BACK:
 					Turn_180();
+					break;
 				case TURN_AHEAD:
 					OLED_Clear();
 					OLED_ShowString(1, 1, "TURN_AHEAD...");
 					Go_Straight(20);
-					Delay_ms(500);
+					Delay_ms(300);
+					break;
 			}
 			cur_point = next_point;
 		}
