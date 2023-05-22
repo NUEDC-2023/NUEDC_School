@@ -1,10 +1,21 @@
 //#include "headfile.h"
 #include "stm32f10x.h"
+#include "Encoder.h"
+#include "OLED.h"
 
 int speed1,speed2,distance1,distance2;
 
+static void rcc_Config(void);
+
+void Encoder_Init(void)
+{
+	rcc_Config();
+	TIMER_config1();
+	// TIMER_config2();
+}
+
 /* RCC时钟配置 */
-void RCC_config(void)
+static void rcc_Config()
 { 
     ErrorStatus HSEStartUpStatus;
  
@@ -122,7 +133,7 @@ void TIMER_config2(void)
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
     TIM_ICInitTypeDef TIM_ICInitStructure;
     
-    /* 允许TIM2的时钟 */
+    /* 允许TIM4的时钟 */
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
  
     /* 将定时器2寄存器设为初始值 */
@@ -154,7 +165,7 @@ void TIMER_config2(void)
     /* 计数器初始化 */
     TIM_SetCounter(TIM4, 0);
  
-    /* 开启定时器2 */
+    /* 开启定时器4 */
     TIM_Cmd(TIM4, ENABLE);
 }
 
@@ -208,7 +219,7 @@ void TIM2_IRQHandler(void)
 
 
 /**************************************************************************
-*  函数功能：TIM3中断服务函数
+*  函数功能：TIM4中断服务函数
 *
 *  入口参数：无
 *
@@ -216,8 +227,25 @@ void TIM2_IRQHandler(void)
 **************************************************************************/
 void TIM4_IRQHandler(void)
 { 		    		  			    
-	if(TIM3->SR&0X0001)//溢出中断
+	if(TIM4->SR&0X0001)//溢出中断
 	{    				   				     	    	
 	}				   
-	TIM3->SR&=~(1<<0);//清除中断标志位 	    
+	TIM4->SR&=~(1<<0);//清除中断标志位 	    
+}
+
+void Encoder_Delay(short marks)
+{
+	distance1 = 0;
+	while (distance1 < marks) 
+		continue;
+	distance1 = 0;
+}
+
+void Encoder_Display_Content(void)
+{
+	Read_EncoderA();
+	Read_EncoderB();
+	OLED_ShowString(1, 1, "Encoder(D|S):");
+	OLED_ShowSignedNum(2, 1, distance1, 6);
+	OLED_ShowSignedNum(3, 1, distance2, 6);
 }

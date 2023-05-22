@@ -6,6 +6,7 @@
 #include "Nav.h"
 #include "OLED.h"
 #include "MoveLogic.h"
+#include "Encoder.h"
 
 int delay_time = 700;
 int foward_speed = 23;
@@ -63,7 +64,7 @@ void Detection_Turn_Left(void)
 	OLED_Clear();
 	OLED_ShowString(1, 1, "Detection_Turn_Left...");
 	Go_Straight(foward_speed);
-	Delay_ms(delay_time);
+	Encoder_Delay(1000);
 	Turn_Left();
 }
 
@@ -72,7 +73,7 @@ void Detection_Turn_Right(void)
 	OLED_Clear();
 	OLED_ShowString(1, 1, "Detection_Turn_Right...");
 	Go_Straight(foward_speed);
-	Delay_ms(delay_time);
+	Encoder_Delay(1000);
 	Turn_Right();
 }
 

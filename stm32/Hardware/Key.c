@@ -5,6 +5,7 @@
 #include "GyroscopeComm.h"
 #include "Serial.h"
 #include "MoveLogic.h"
+#include "Encoder.h"
 
 //按键初始化函数
 int flag_page;
@@ -213,8 +214,12 @@ void OLED_Show(void)
 			OpenMV_Display_Specs();
 			break;
 		case 1:
+			Encoder_Display_Content();
+			break;
+		case 2:
 			Gyroscope_Display_Specs();
 			break;
+		
 //			y1h1_c;
 //			y1h2_c;
 //			y1h3_c;

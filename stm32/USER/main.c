@@ -8,6 +8,7 @@
 #include "MoveLogic.h"
 #include "OpenmvComm.h"
 #include "Buzzer.h"
+#include "Encoder.h"
 
 // Record of global varialble: 
 // OpenmvComm: 
@@ -25,13 +26,15 @@ int main(void)
 {
 	//uint8_t element_flag=0; //元素标志位 0正常巡线，1到7 7个多路口  8停止标志位
 	
-	Delay_ms(5000); //Omv start up
+	BUZZER_Init();
+	BUZZER_2Sec();
 	OLED_Init();  //屏幕初始化
 	Motor_Init(); //电机初始化
 	KEY_Init();   //按键初始化
 	Serial_Gyroscope_Init(); //陀螺仪串口通信初始化
+	Encoder_Init();
+	Delay_ms(5000); //Omv start up
 	Serial_Openmv_Init();	//Openmv串口通信初始化
-	BUZZER_Init();
 	
 	//以下书写主代码
 	while(1)
@@ -39,10 +42,10 @@ int main(void)
 		OLED_Show();
 		if(start_flag == 1)
 		{ 
-//			Motor_SetSpeed(30);
-//			Motor_SetSpeed2(30);
-			if(Move_Q1(30)) //CHANGE PID IF CHANGE THIS //todo!: NEDD a function for changing this on OLED
-				break;
+			Motor_SetSpeed(100);
+			Motor_SetSpeed2(100);
+//			if(Move_Q1(30)) //CHANGE PID IF CHANGE THIS //todo!: NEDD a function for changing this on OLED
+//				break;
 		}
 	}
 

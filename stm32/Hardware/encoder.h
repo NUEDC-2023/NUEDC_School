@@ -6,7 +6,7 @@ extern 	int speed1,speed2,distance1,distance2;
 void Read_EncoderB(void);
 void Read_EncoderA(void);
 void TIMER_config2(void);
-void RCC_config(void);
+void Encoder_Init(void);
 void TIMER_config1(void);
-
-
+void Encoder_Display_Content(void);
+void Encoder_Delay(short marks);
