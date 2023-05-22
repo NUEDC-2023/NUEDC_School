@@ -7,6 +7,7 @@
 #include "Nav.h"
 #include "MoveLogic.h"
 #include "OpenmvComm.h"
+#include "Buzzer.h"
 
 // Record of global varialble: 
 // OpenmvComm: 
@@ -30,6 +31,7 @@ int main(void)
 	KEY_Init();   //按键初始化
 	Serial_Gyroscope_Init(); //陀螺仪串口通信初始化
 	Serial_Openmv_Init();	//Openmv串口通信初始化
+	BUZZER_Init();
 	
 	//以下书写主代码
 	while(1)
