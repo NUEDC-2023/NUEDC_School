@@ -8,7 +8,7 @@ int Cy, flag_treasure=0, flag_trap=0, flag_left=0, flag_right=0, flag_front=0, f
 // Internal
 // 0b00000001(0x01) left 0b00000010(0x02) front    0b00000100(0x04) right
 // 0b00001000(0x08) trap 0b00010000(0x10) treasure 0b00000111(0x07) = 0x01|0x02|0x04
-static void set_Flags(uint8_t Cx, int Cy){	
+static void set_Flags(uint8_t Cx, int _Cy){	
 	//left
 	if (Cx & 0x01) flag_left = 1;
 	else flag_left = 0;

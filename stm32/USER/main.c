@@ -24,7 +24,7 @@ int main(void)
 {
 	//uint8_t element_flag=0; //元素标志位 0正常巡线，1到7 7个多路口  8停止标志位
 	
-	Delay_ms(3000); //Omv start up
+	Delay_ms(5000); //Omv start up
 	OLED_Init();  //屏幕初始化
 	Motor_Init(); //电机初始化
 	KEY_Init();   //按键初始化
@@ -36,8 +36,10 @@ int main(void)
 	{
 		OLED_Show();
 		if(start_flag == 1)
-		{
-			if(Move_Q1(50)) //CHANGE PID IF CHANGE THIS
+		{ 
+//			Motor_SetSpeed(30);
+//			Motor_SetSpeed2(30);
+			if(Move_Q1(30)) //CHANGE PID IF CHANGE THIS //todo!: NEDD a function for changing this on OLED
 				break;
 		}
 	}

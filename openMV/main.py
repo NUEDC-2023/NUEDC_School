@@ -6,25 +6,43 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 
+sensor_brightnes = 1
+
 side_th=20
 side_wide=20
 
 middle_wide=200
-front_wide = 80
+front_wide = 120
 
-left_roi =  (			  side_th , 170, side_wide, 120)
-right_roi = (320-side_th-side_wide , 170, side_wide, 120)
-middle_roi = ((int)((320-middle_wide)/2), 200, middle_wide, 20)
+left_roi =  (			  side_th , 160, side_wide, 90)
+right_roi = (320-side_th-side_wide , 160, side_wide, 90)
+middle_roi = ((int)((320-middle_wide)/2), 220, middle_wide, 20)
 front_roi = ((int)((320-front_wide)/2), 80, front_wide , 20)
 red_roi = (10, 10, 300, 180)
 
 # grey_threshold =(0, 30, 10, -74, -52, 34)
-grey_new_threshold = (21, 40, -10, 37, -21, 17)
-front_grey_threshold = (45, 60, -15, 15, -20, 0)
+# grey_middle_threshold = (18, 45, -10, 19, -31, 0) # with mask
+# grey_right_threshold = (15, 44, -20, 16, -30, 15)# with mask
+# grey_left_threshold = (20, 44, -20, 16, -30, 15)# with mask
+
+# nolight 203
+# grey_middle_threshold = (10, 32, -17, 19, -31, 21)
+# grey_right_threshold = (12, 37, -10, 19, -21, 20)
+# grey_left_threshold = (12, 37, -30, 24, -41, 23)
+# front_grey_threshold = (31, 54, -20, 19, -26, 4)
+
+grey_middle_threshold = (38, 62, -24, 15, -40, 30)
+grey_right_threshold = (30, 55, -18, 22, -25, -3)
+grey_left_threshold = (40, 61, -24, 15, -40, 30)
+front_grey_threshold = (31, 54, -20, 19, -26, 4)
+
 red_threshold =(0, 81, 75, 6, -4, 69)
 
-side_area_th = 250
+side_area_th = 220
+side_area_max_th = 800
 red_area_th=2000 # 待調整
+middle_area_th = 600
+# middle_area_max_th = 1200
 
 object=0
 cx=0x00
@@ -40,9 +58,11 @@ def IMG_init():
     sensor.reset()
     sensor.set_pixformat(sensor.RGB565)
     sensor.set_framesize(sensor.QVGA)
-    sensor.skip_frames(20)
     sensor.set_auto_gain(False)
     sensor.set_auto_whitebal(False)
+    sensor.set_auto_exposure(False, exposure_us  = 10000)
+    sensor.skip_frames(100)
+
     red_led.on()
     green_led.on()
     blue_led.on()
@@ -64,9 +84,9 @@ if __name__ == '__main__':
         clock.tick()
         img = sensor.snapshot()
 
-        left_line_blobs = img.find_blobs([grey_new_threshold], merge = True, roi = left_roi)
-        right_line_blobs = img.find_blobs([grey_new_threshold], merge = True, roi = right_roi)
-        middle_line_blobs = img.find_blobs([grey_new_threshold], merge = True, roi = middle_roi)
+        left_line_blobs = img.find_blobs([grey_left_threshold], merge = True, roi = left_roi)
+        right_line_blobs = img.find_blobs([grey_right_threshold], merge = True, roi = right_roi)
+        middle_line_blobs = img.find_blobs([grey_middle_threshold], merge = True, roi = middle_roi)
         red_blobs = img.find_blobs([red_threshold], pixels_threshold=150, roi=red_roi, area_threshold=130)
         front_line_blobs = img.find_blobs([front_grey_threshold], roi = front_roi)
 
@@ -89,7 +109,7 @@ if __name__ == '__main__':
 
         if right_line_blobs:
             b = max(right_line_blobs, key=lambda x: x.area())
-            if b.pixels() > side_area_th:
+            if b.pixels() > side_area_th and b.pixels() < side_area_max_th:
                 cx=cx|0b00000100
                 img.draw_rectangle(b[0:4], color = GREEN, thickness = 2)
                 img.draw_cross(b[5], b[6], color = GREEN, thickness = 2)
@@ -98,9 +118,13 @@ if __name__ == '__main__':
 
         if middle_line_blobs:
             b = max(middle_line_blobs, key=lambda x: x.area())
-            img.draw_rectangle(b.rect(), color = YELLOW, thickness = 2)
-            img.draw_cross(b[5], b[6], color = YELLOW, thickness = 2)
-            cy=int(((b.cx()-(int)((320-middle_wide)/2))/middle_wide)*100)
+            if b.pixels() > middle_area_th :
+                img.draw_rectangle(b.rect(), color = YELLOW, thickness = 2)
+                img.draw_cross(b[5], b[6], color = YELLOW, thickness = 2)
+                cy=int(((b.cx()-(int)((320-middle_wide)/2))/middle_wide)*100)
+            else:
+                middle_line_blobs = False;
+
 
         if front_line_blobs:
             cx=cx|0b00000010

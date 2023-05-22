@@ -1,6 +1,7 @@
 #include "GyroscopeComm.h"
 #include "String.h"
 #include "Delay.h"
+#include "Nav.h" //todo: this is not correct way to implement ideal_heading changing
 
 float pitch,roll,yaw;
 float pitch_holder, yaw_holder, roll_holder;
@@ -30,6 +31,7 @@ void Init_Gyro_Data(){
 	OLED_Clear();
 	OLED_ShowString(1, 1, "Resetting Gyro...");
 	ring=0; pitch_holder=0; yaw_holder=0; roll_holder=0; pitch=0; roll=0; yaw=0;
+	ideal_heading = roll_holder;
 	Delay_ms(200);
 	OLED_Clear();
 	OLED_ShowString(1, 1, "Done.");

@@ -13,10 +13,9 @@
      GPIO_WriteBit(BUZZERPORT,BUZZER,(BitAction)(1)); 
  }
 
- void BUZZER_2Sec(void){ //响两秒函数
-     
+ void BUZZER_2Sec(void)
+{ //响两秒函数
          GPIO_WriteBit(BUZZERPORT,BUZZER,(BitAction)(0)); 
-         Delay_us(2000); 	
+         Delay_ms(2000); 	
          GPIO_WriteBit(BUZZERPORT,BUZZER,(BitAction)(1)); 
-         
  }

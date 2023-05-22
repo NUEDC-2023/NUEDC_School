@@ -7,15 +7,19 @@
 #include "OLED.h"
 #include "MoveLogic.h"
 
+int delay_time = 480;
+int foward_speed = 23;
+long long int ideal_heading = 0;
 //Internal:
 //Ñ²Ïß´úÂë
 static void line_track(int Speed){
 	// Easier to grab when visual rec is out of control.
-	if (Cy == 255) 
+	if (Cy == 256) //256 for stopping
 	{
 		//Slowly go ahead when no black line is detected.
-		Motor_SetSpeed(20);
-		Motor_SetSpeed2(20);
+		Motor_SetSpeed(Speed/1.4);
+		Motor_SetSpeed2(Speed/1.6);
+		Delay_ms(50);
 		return;
 	} // Easier for later calc.
 	
@@ -54,9 +58,6 @@ void Go_Straight(int speed)
 	Motor_SetSpeed2(speed);
 }
 
-
-int delay_time = 600;
-int foward_speed = 20;
 void Detection_Turn_Left(void)
 {
 	OLED_Clear();
@@ -79,16 +80,16 @@ void Turn_Right(void)
 {
 	Motor_SetSpeed(-20);
 	Motor_SetSpeed2(20);
-	float start_roll = roll_holder;
 	while(1)
 	{
-		if (start_roll - roll_holder >= 83) 
+		if (ideal_heading - roll_holder >= 80) 
 		{
 			break;
 		}
 	}
 	Stop();
-	cur_direction = cur_direction +1;
+	ideal_heading -= 90; 
+	cur_direction = cur_direction -1;
 	cur_direction = Correct_Direction(cur_direction);
 }
 
@@ -96,52 +97,51 @@ void Turn_Left(void)
 {
 	Motor_SetSpeed(20);
 	Motor_SetSpeed2(-20);
-	float start_roll = roll_holder;
 	while(1)
 	{
-		if (roll_holder - start_roll >= 83) 
-		{
+		if (roll_holder - ideal_heading >= 80) 
+		{ 
 			break;
-		}
+		} 
 	}
 	Stop();
-	cur_direction = cur_direction - 1; //todo: Robustness decreased, as the direction is ddicated by turning rather than real heading.
+	ideal_heading += 90; 
+	cur_direction = cur_direction +1; //todo: Robustness decreased, as the direction is ddicated by turning rather than real heading.
 	cur_direction = Correct_Direction(cur_direction);
 }
 void Turn_180(void)
 {
 	Motor_SetSpeed(-20);
 	Motor_SetSpeed2(20);
-	float start_roll = roll_holder;
 	while(1)
 	{
-		if (roll_holder - start_roll >= 170) 
+		if (roll_holder - ideal_heading <= - 170) 
 		{
 			break;
 		}
 	}
 	Stop();
+	ideal_heading -= 180; 
+	cur_direction = cur_direction -2; //todo: Robustness decreased, as the direction is ddicated by turning rather than real heading.
+	cur_direction = Correct_Direction(cur_direction);
 }
 
 int Track_Line(int Speed) {
 	//todo:! Stop for a new point when no front line is detected.
 	if (flag_turn == 1){
 		int temp_left_flag = flag_left, temp_right_flag = flag_right;
-		//For better detection.
-		Go_Straight(foward_speed);
-		Delay_ms(100);
 		if (flag_front + flag_left + flag_right >= 2) {
 			//for making sure
 			Delay_ms(10);
 			if (flag_front + flag_left + flag_right >= 2) {
-				//todo: Delete this, debug only
-				Stop();
-				OLED_Clear();
-				OLED_ShowString(1, 1, "Turn detected..");
-				OLED_ShowNum(2, 1, flag_left, 1);
-				OLED_ShowNum(2, 3, flag_front, 1);
-				OLED_ShowNum(2, 5, flag_right, 1);
-				Delay_ms(5000);
+				//Delete this, debug only
+//				Stop();
+//				OLED_Clear();
+//				OLED_ShowString(1, 1, "Turn detected..");
+//				OLED_ShowNum(2, 1, flag_left, 1);
+//				OLED_ShowNum(2, 3, flag_front, 1);
+//				OLED_ShowNum(2, 5, flag_right, 1);
+//				Delay_ms(5000);
 				return 0;
 			} else return 1;
 		} else {
