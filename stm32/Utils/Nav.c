@@ -7,7 +7,7 @@
 #include "OLED.h"
 #include "MoveLogic.h"
 
-int delay_time = 480;
+int delay_time = 700;
 int foward_speed = 23;
 long long int ideal_heading = 0;
 //Internal:
