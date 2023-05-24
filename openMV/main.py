@@ -15,8 +15,8 @@ middle_wide=200
 front_wide = 120
 
 end_roi = (58, 100, 220, 50)
-left_roi =  (			  side_th , 150, side_wide, 90)
-right_roi = (320-side_th-side_wide , 150, side_wide, 90)
+left_roi =  (			  side_th , 130, side_wide, 130)
+right_roi = (320-side_th-side_wide , 130, side_wide, 130)
 middle_roi = ((int)((320-middle_wide)/2), 220, middle_wide, 20)
 front_roi = ((int)((320-front_wide)/2), 80, front_wide , 20)
 red_roi = (10, 10, 300, 180)
@@ -33,17 +33,18 @@ red_roi = (10, 10, 300, 180)
 # front_grey_threshold = (31, 54, -20, 19, -26, 4)
 
 grey_middle_threshold = (30, 56, 9, -13, -19, 19)
-grey_right_threshold = (19, 46, -18, 22, -25, -3)
-grey_left_threshold = (40, 61, -24, 15, -40, 30)
+grey_right_threshold = (19, 47, -18, 22, -25, 1)
+grey_left_threshold = (30, 47, -24, 15, -40, 5)
 front_grey_threshold = (31, 54, -20, 19, -26, 4)
 end_threshold = (25, 53, 26, 81, 23, 54)
-red_threshold =(0, 81, 75, 6, -4, 69)
+red_threshold = (24, 48, 6, 60, 4, 52)
 
 end_area_th = 9000
-side_area_th = 220
+side_area_th = 100
 side_area_max_th = 800
 red_area_th=2000 # 待調整
 middle_area_th = 600
+side_detect_th = 165
 # middle_area_max_th = 1200
 
 object=0
@@ -93,13 +94,6 @@ if __name__ == '__main__':
         red_blobs = img.find_blobs([red_threshold], pixels_threshold=150, roi=red_roi, area_threshold=130)
         front_line_blobs = img.find_blobs([front_grey_threshold], roi = front_roi)
 
-        if end_blobs:
-            b = max(end_blobs, key=lambda x: x.area())
-            if b.pixels() > end_area_th:
-                cx = cx|0b10000000
-                img.draw_rectangle(b[0:4], color = WHITE, thickness = 1)
-                img.draw_cross(b[5], b[6], color = WHITE, thickness = 1)
-
         if red_blobs:
             b = max(red_blobs, key=lambda x: x.area())
             img.draw_circle((b.cx(), b.cy(),int((b.w()+b.h())/4)))
@@ -108,23 +102,40 @@ if __name__ == '__main__':
             else :
                 cx = cx|0b00001000
 
+        a_sentinal = False
+        b_sentinal = False
         if left_line_blobs:
-            b = max(left_line_blobs, key=lambda x: x.area())
-            if b.pixels() > side_area_th:
+            a = max(left_line_blobs, key=lambda x: x.area())
+            a_sentinal = True
+            img.draw_rectangle(a[0:4], color = RED, thickness = 2)
+            img.draw_cross(a[5], a[6], color = RED, thickness = 2)
+            if a.pixels() > side_area_th and a.cy() > side_detect_th :
                 cx=cx|0b00000001
-                img.draw_rectangle(b[0:4], color = RED, thickness = 2)
-                img.draw_cross(b[5], b[6], color = RED, thickness = 2)
             else:
                 left_line_blobs = False;
 
         if right_line_blobs:
             b = max(right_line_blobs, key=lambda x: x.area())
-            if b.pixels() > side_area_th and b.pixels() < side_area_max_th:
+            b_sentinal = True
+            img.draw_rectangle(b[0:4], color = GREEN, thickness = 2)
+            img.draw_cross(b[5], b[6], color = GREEN, thickness = 2)
+            if b.pixels() > side_area_th and b.cy() > side_detect_th:
                 cx=cx|0b00000100
-                img.draw_rectangle(b[0:4], color = GREEN, thickness = 2)
-                img.draw_cross(b[5], b[6], color = GREEN, thickness = 2)
             else:
                 right_line_blobs = False;
+
+        if a_sentinal and b_sentinal:
+            if b.pixels() > side_area_th and a.pixels() > side_area_th:
+                if a.cy() > side_detect_th or b.cy() > side_detect_th:
+                    cx = cx|0b00000101
+
+        if end_blobs:
+            b = max(end_blobs, key=lambda x: x.area())
+            if b.pixels() > end_area_th:
+                cx = 0
+                cx = cx|0b10000000
+                img.draw_rectangle(b[0:4], color = WHITE, thickness = 1)
+                img.draw_cross(b[5], b[6], color = WHITE, thickness = 1)
 
         if middle_line_blobs:
             b = max(middle_line_blobs, key=lambda x: x.area())
@@ -135,11 +146,11 @@ if __name__ == '__main__':
             else:
                 middle_line_blobs = False;
 
-
         if front_line_blobs:
             cx=cx|0b00000010
             b = max(front_line_blobs, key=lambda x: x.area())
             img.draw_rectangle(b.rect(), color = WHITE, thickness = 2)
             img.draw_cross(b[5], b[6], color = WHITE, thickness = 2)
 
+        print(cx)
         sending_data(cx, cy)

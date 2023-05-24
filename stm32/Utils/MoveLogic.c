@@ -10,6 +10,7 @@
 #include "Encoder.h"
 #include "OpenmvComm.h"
 
+int flag_bug_sentinal = 0;
 int cur_direction = MAP_LEFT;
 int flag_area = 2;
 int flag_treasure_found = 0;
@@ -107,7 +108,7 @@ int Info_Map[MAP_SIZE][MAP_CONTENT_SIZE] =
 //-1 for end.
 int route_Map[ROUTE_MAP_SIZE][ROUTE_MAP_CONTENT_SIZE] = 
 {
-	{},
+	{0},
 	{2, 21, 22, 21, 24, 25, 26, 27, 26, 29, 28},
 }; 
 static int is_End_Point(int current_point){
@@ -122,11 +123,15 @@ static int is_End_Point(int current_point){
 }
 static int search_Q1_Next_Point(int current_point)
 {
+	if (current_point == 1)
+		flag_bug_sentinal = 1;
 	return current_point +1;
 }
 
 static int search_Q2_Next_Point(int current_point)
 {
+	if (current_point == 1)
+		flag_bug_sentinal = 1;
 	int* route = route_Map[flag_area-1];
 	
 	//Haven't get on the branch
@@ -190,9 +195,9 @@ static int get_Turn_Direction(int cur_point, int next_point)
 	int direction = cur_direction - next_direction ;
 	direction = Correct_Direction(direction);
 	//delete this, debug only:
-//	Stop();
-//	BUZZER_05Sec();
-//	Delay_ms(500);	
+	Stop();
+	BUZZER_05Sec();
+	Delay_ms(500);	
 	return direction;
 }
 
@@ -240,11 +245,6 @@ int Simple_Move_Q1(int speed)
 		}
 		itr++;
 	} 
-	if (flag_end == 1) {
-		Go_Straight(20);
-		Encoder_Delay(800);
-		return 1;
-	}
 	return 0;
 }
 int Move_Q1(int speed)
@@ -257,9 +257,13 @@ int Move_Q1(int speed)
 		{
 			case TURN_RIGHT:
 				Detection_Turn_Right();
+				Stop();
+			  Delay_ms(300);
 				break;
 			case TURN_LEFT:
 				Detection_Turn_Left();
+				Stop();
+			  Delay_ms(300);
 				break;
 			case TURN_BACK:
 				Turn_180();
@@ -267,8 +271,8 @@ int Move_Q1(int speed)
 			case TURN_AHEAD:
 				OLED_Clear();
 				OLED_ShowString(1, 1, "TURN_AHEAD...");
-				Go_Straight(20);
-				Delay_ms(300);
+				Go_Straight(22);
+				Encoder_Delay(300);
 				break;
 		}
 		cur_point = next_point;

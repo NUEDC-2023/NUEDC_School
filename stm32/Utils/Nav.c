@@ -10,28 +10,35 @@
 
 // int delay_time = 700;
 int foward_speed = 25;
-int enc_delay = 730;
-int mark = 600;
+int turn_speed = 18;
+int turn_angle = 75;
+int enc_delay = 755;
+int mark = 620;
 long long int ideal_heading = 0;
+int angle_diff = 0;
 //Internal:
 //巡线代码
 static void line_track(int Speed){
 	if (Cy == 256) //256 for no detection.
 	{
 		//Slowly go ahead when no black line is detected.
-		Motor_SetSpeed(Speed/1);
-		Motor_SetSpeed2(Speed/1);
+		Motor_SetSpeed(Speed*0.6);
+		Motor_SetSpeed2(Speed*0.6);
 		Delay_ms(50);
 		return;
 	} // Easier for later calc.
+	
+	angle_diff = roll_holder - ideal_heading;
+  Cy += angle_diff;
+	//todo: debug only
 	
   float output = pid_cal(Cy,50) +50;
 	int leftSpeed = Speed*output/100;
 	int rightSpeed = Speed - leftSpeed;
 	if (leftSpeed > 40) leftSpeed = 40;
 	if (rightSpeed > 40) rightSpeed = 40;
-	if (leftSpeed < 20) leftSpeed = 20;
-	if (rightSpeed < 20) rightSpeed = 20;
+	if (leftSpeed < 15) leftSpeed = 15;
+	if (rightSpeed < 15) rightSpeed = 15;
 	
   if(output>=0)   //向左转，右快，左慢
 	{
@@ -57,7 +64,7 @@ void Stop(void)
 void Go_Straight(int speed)
 {
 	Motor_SetSpeed(speed);
-	Motor_SetSpeed2(speed);
+	Motor_SetSpeed2(speed*0.9);
 }
 
 void Detection_Turn_Left(void)
@@ -84,11 +91,11 @@ void Detection_Turn_Right(void)
 
 void Turn_Right(void)
 {
-	Motor_SetSpeed(-18);
-	Motor_SetSpeed2(18);
+	Motor_SetSpeed(-turn_speed);
+	Motor_SetSpeed2(turn_speed);
 	while(1)
 	{
-		if (ideal_heading - roll_holder >= 80) 
+		if (ideal_heading - roll_holder >= turn_angle) 
 		{
 			break;
 		}
@@ -101,11 +108,11 @@ void Turn_Right(void)
 
 void Turn_Left(void)
 {
-	Motor_SetSpeed(18);
-	Motor_SetSpeed2(-18);
+	Motor_SetSpeed(turn_speed);
+	Motor_SetSpeed2(-turn_speed);
 	while(1)
 	{
-		if (roll_holder - ideal_heading >= 80) 
+		if (roll_holder - ideal_heading >= turn_angle) 
 		{ 
 			break;
 		} 
@@ -134,9 +141,15 @@ void Turn_180(void)
 
 int Track_Line(int Speed) {
 	//todo:! Stop for a new point when no front line is detected.
+	sent_data1(flag_left,flag_right,flag_front,flag_turn,Cy,0);
 	if (flag_turn == 1){
 		int temp_left_flag = flag_left, temp_right_flag = flag_right;
-		if (flag_front + flag_left + flag_right >= 2) {
+		Delay_ms(15);
+		if (flag_bug_sentinal){
+			flag_bug_sentinal = 0;
+			return 0;
+		}
+		if (flag_front + flag_left + flag_right >= 2 ) {
 			return 0;
 		} else {		
 			if (temp_left_flag) {

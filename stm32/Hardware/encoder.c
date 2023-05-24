@@ -3,6 +3,7 @@
 #include "OLED.h"
 #include "Delay.h"
 #include "Serial.h"
+#include "OpenmvComm.h"
 
 int speed1,speed2,distance1,distance2;
 

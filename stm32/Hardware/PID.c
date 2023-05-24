@@ -2,13 +2,13 @@
 //float ki=0.20;
 //float kd=8	;
 
-float kp=2;
-float ki=0.18;
-float kd=6.0;
+float kp=1.8;
+float ki=0.1;
+float kd=3.8;
 
 float pid_cal(int input,int measure)
 {
-	int limit =85;
+	int limit =80;
 	static int err_last ,integral;
 	int err=input-measure;
 	integral+=err;

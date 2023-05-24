@@ -74,7 +74,7 @@ void USART1_IRQHandler(void)
 
 
 //以下为openmv的串口通信部分
-//STM32 的PD5为TX 和PD6为RX  (需要重定义功能) ----openmv    5，6都是usart2   
+//STM32 的PD5为TX 和PD6为RX  (需要重定义功能) ----openmv    5，6都是usSSSart2   
 void Serial_Openmv_Init(void)   //Opemmv 的串口
 {
 	//USART,PD5-TX,PD6-RX

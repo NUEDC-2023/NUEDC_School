@@ -24,10 +24,9 @@ void BUZZER_2Sec(void)
 
 void BUZZER_05Sec(void)
 {
-	return;
 	//todo!: be quiet here!
-//	GPIO_ResetBits(GPIOD,GPIO_Pin_10);		
-//  Delay_ms(500);	
-//	GPIO_SetBits(GPIOD,GPIO_Pin_10);	
+	GPIO_ResetBits(GPIOD,GPIO_Pin_10);		
+  Delay_ms(500);	
+	GPIO_SetBits(GPIOD,GPIO_Pin_10);	
 }
 

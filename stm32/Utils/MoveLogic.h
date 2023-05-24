@@ -20,6 +20,8 @@
 #define ROUTE_MAP_SIZE 6
 #define ROUTE_MAP_CONTENT_SIZE 11
 
+extern int flag_bug_sentinal;
+
 int Correct_Direction(int direction);
 int Move_Q1(int speed);
 int Move(int Speed);
