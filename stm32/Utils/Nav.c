@@ -8,18 +8,19 @@
 #include "MoveLogic.h"
 #include "Encoder.h"
 
-int delay_time = 700;
-int foward_speed = 23;
+// int delay_time = 700;
+int foward_speed = 25;
+int enc_delay = 730;
+int mark = 600;
 long long int ideal_heading = 0;
 //Internal:
 //Ñ²Ïß´úÂë
 static void line_track(int Speed){
-	// Easier to grab when visual rec is out of control.
-	if (Cy == 256) //256 for stopping
+	if (Cy == 256) //256 for no detection.
 	{
 		//Slowly go ahead when no black line is detected.
-		Motor_SetSpeed(Speed/1.4);
-		Motor_SetSpeed2(Speed/1.6);
+		Motor_SetSpeed(Speed/1);
+		Motor_SetSpeed2(Speed/1);
 		Delay_ms(50);
 		return;
 	} // Easier for later calc.
@@ -63,24 +64,28 @@ void Detection_Turn_Left(void)
 {
 	OLED_Clear();
 	OLED_ShowString(1, 1, "Detection_Turn_Left...");
-	Go_Straight(foward_speed);
-	Encoder_Delay(1000);
+  Go_Straight(foward_speed);
+	Encoder_Delay(enc_delay);
 	Turn_Left();
+	Stop();
+	Delay_ms(50);
 }
 
 void Detection_Turn_Right(void)
 {
 	OLED_Clear();
 	OLED_ShowString(1, 1, "Detection_Turn_Right...");
-	Go_Straight(foward_speed);
-	Encoder_Delay(1000);
+  Go_Straight(foward_speed);
+	Encoder_Delay(enc_delay);
 	Turn_Right();
+	Stop();
+	Delay_ms(50);
 }
 
 void Turn_Right(void)
 {
-	Motor_SetSpeed(-20);
-	Motor_SetSpeed2(20);
+	Motor_SetSpeed(-18);
+	Motor_SetSpeed2(18);
 	while(1)
 	{
 		if (ideal_heading - roll_holder >= 80) 
@@ -96,8 +101,8 @@ void Turn_Right(void)
 
 void Turn_Left(void)
 {
-	Motor_SetSpeed(20);
-	Motor_SetSpeed2(-20);
+	Motor_SetSpeed(18);
+	Motor_SetSpeed2(-18);
 	while(1)
 	{
 		if (roll_holder - ideal_heading >= 80) 
@@ -123,7 +128,7 @@ void Turn_180(void)
 	}
 	Stop();
 	ideal_heading -= 180; 
-	cur_direction = cur_direction -2; //todo: Robustness decreased, as the direction is ddicated by turning rather than real heading.
+	cur_direction = cur_direction -2; //todo: Robustness decreased, as the direction is dedicated by turning rather than real heading.
 	cur_direction = Correct_Direction(cur_direction);
 }
 
@@ -132,21 +137,8 @@ int Track_Line(int Speed) {
 	if (flag_turn == 1){
 		int temp_left_flag = flag_left, temp_right_flag = flag_right;
 		if (flag_front + flag_left + flag_right >= 2) {
-			//for making sure
-			Delay_ms(10);
-			if (flag_front + flag_left + flag_right >= 2) {
-				//Delete this, debug only
-//				Stop();
-//				OLED_Clear();
-//				OLED_ShowString(1, 1, "Turn detected..");
-//				OLED_ShowNum(2, 1, flag_left, 1);
-//				OLED_ShowNum(2, 3, flag_front, 1);
-//				OLED_ShowNum(2, 5, flag_right, 1);
-//				Delay_ms(5000);
-				return 0;
-			} else return 1;
-		} else {
-			//Car is going straight now.			
+			return 0;
+		} else {		
 			if (temp_left_flag) {
 				Detection_Turn_Left();
 			} else if (temp_right_flag) {
@@ -157,4 +149,15 @@ int Track_Line(int Speed) {
 		line_track(Speed);
 	}
 	return 1;
+}
+
+int Simple_Track_Line(int Speed) {
+	if (flag_turn == 1){
+		return 1;
+	} else if (flag_end == 1) {
+		return 2;
+	} else{
+		line_track(Speed);
+	}
+	return 0;
 }

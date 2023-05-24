@@ -15,12 +15,15 @@
 #define _TURN_LEFT 3
 #define _TURN_BACK -2
 
-#define MAP_SIZE 	7
+#define MAP_SIZE 	85
 #define MAP_CONTENT_SIZE 3
+#define ROUTE_MAP_SIZE 6
+#define ROUTE_MAP_CONTENT_SIZE 11
 
 int Correct_Direction(int direction);
 int Move_Q1(int speed);
 int Move(int Speed);
 void Move_Logic_Display(void);
+int Simple_Move_Q1(int speed);
 
 extern int Info_Map[MAP_SIZE][MAP_CONTENT_SIZE], cur_direction;

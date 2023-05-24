@@ -5,6 +5,7 @@
 
 void BUZZER_Init(void);
 void BUZZER_2Sec(void);
+void BUZZER_D05Sec(void);
 #endif
 
 

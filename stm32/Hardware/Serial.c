@@ -189,6 +189,16 @@ void USART2_IRQHandler(void)
 		
 }
 
+void Usart_SendByte(USART_TypeDef* pUSARTx, uint8_t ch)
+{
+    /* ?????????USART */
+    USART_SendData(pUSARTx, ch);
+
+    /* ??????????? */
+    while(USART_GetFlagStatus(pUSARTx, USART_FLAG_TXE) == RESET);
+		//USART_SendData(UART8, ch);
+
+}
 
 void Serial_SendByte(uint8_t Byte)
 {
@@ -273,3 +283,40 @@ void USART11_IRQHandler(void)
 		USART_ClearITPendingBit(USART1, USART_IT_RXNE);
 	}
 }
+
+void sent_data1(int A,int B,int C,int D,int E,int F)
+{
+    int i;
+	u8 BUFF[20];
+    u8 sumcheck = 0;
+    u8 addcheck = 0;
+    u8 _cnt=0;
+    BUFF[_cnt++]=0xAA;//??
+    BUFF[_cnt++]=0xFF;//????
+    BUFF[_cnt++]=0xF1;//???
+    BUFF[_cnt++]=0x0C;//????
+    BUFF[_cnt++]=BYTE0(A);//????,????,????
+    BUFF[_cnt++]=BYTE1(A);//?????????,???????????
+    BUFF[_cnt++]=BYTE0(B);
+    BUFF[_cnt++]=BYTE1(B);
+    BUFF[_cnt++]=BYTE0(C);
+    BUFF[_cnt++]=BYTE1(C);
+    BUFF[_cnt++]=BYTE0(D);
+    BUFF[_cnt++]=BYTE1(D);
+		BUFF[_cnt++]=BYTE0(E);
+    BUFF[_cnt++]=BYTE1(E);
+		BUFF[_cnt++]=BYTE0(F);
+    BUFF[_cnt++]=BYTE1(F);
+    //SC?AC????????????????
+    for(i=0;i<BUFF[3]+4;i++)
+    {
+        sumcheck+=BUFF[i];
+        addcheck+=sumcheck;
+    }
+    BUFF[_cnt++]=sumcheck;
+    BUFF[_cnt++]=addcheck;
+
+    for(i=0;i<_cnt;i++) Usart_SendByte(USART2,BUFF[i]);//????????
+}
+
+

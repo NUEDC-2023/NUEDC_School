@@ -5,9 +5,15 @@
 #include <stdint.h>
 #include <stdarg.h>
 
+#define BYTE0(dwTemp)       ( *( (char *)(&dwTemp)    ) )
+#define BYTE1(dwTemp)       ( *( (char *)(&dwTemp) + 1) )
+#define BYTE2(dwTemp)       ( *( (char *)(&dwTemp) + 2) )
+#define BYTE3(dwTemp)       ( *( (char *)(&dwTemp) + 3) )
+
 extern int RxState;	
 extern unsigned char sign;
 extern unsigned char data_buffer[11], Recv_buf[11];
+void sent_data1(int A,int B,int C,int D,int E,int F);
 
 void Serial_Gyroscope_Init(void);
 void Serial_Openmv_Init(void);

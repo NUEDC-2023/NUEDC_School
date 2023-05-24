@@ -1,7 +1,8 @@
-//#include "headfile.h"
 #include "stm32f10x.h"
 #include "Encoder.h"
 #include "OLED.h"
+#include "Delay.h"
+#include "Serial.h"
 
 int speed1,speed2,distance1,distance2;
 
@@ -60,7 +61,7 @@ void TIMER_config1(void)
     //GPIO_PinRemapConfig(GPIO_PartialRemap2_TIM2, ENABLE);
 	  GPIO_PinRemapConfig(GPIO_FullRemap_TIM2, ENABLE);
 
-	  GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable , ENABLE); //禁止JTAG功能，把PB3，PA15作为普通IO口使用  
+	  GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable , ENABLE); //禁止JTAG功能，把PB3?，PA15?作为普通IO口使用  
 
     /* 将GPIOA时钟设置为默认参数 */
     GPIO_DeInit(GPIOA);    
@@ -212,7 +213,8 @@ void Read_EncoderB(void)
 void TIM2_IRQHandler(void)
 { 		    		  			    
 	if(TIM2->SR&0X0001)//溢出中断
-	{    				   				     	    	
+	{    		
+		TIM2->CNT = 0;
 	}				   
 	TIM2->SR&=~(1<<0);//清除中断标志位 	    
 }
@@ -228,24 +230,31 @@ void TIM2_IRQHandler(void)
 void TIM4_IRQHandler(void)
 { 		    		  			    
 	if(TIM4->SR&0X0001)//溢出中断
-	{    				   				     	    	
+	{    				  
+		TIM4->CNT = 0;
 	}				   
 	TIM4->SR&=~(1<<0);//清除中断标志位 	    
 }
 
 void Encoder_Delay(short marks)
-{
+{	
+	Delay_ms(20);	
 	distance1 = 0;
-	while (distance1 < marks) 
-		continue;
+	while(1) 
+	{
+		Delay_ms(10);
+		Read_EncoderA();
+		if (distance1 >= marks){
+			break;
+		}
+	}	
 	distance1 = 0;
 }
 
 void Encoder_Display_Content(void)
 {
 	Read_EncoderA();
-	Read_EncoderB();
 	OLED_ShowString(1, 1, "Encoder(D|S):");
 	OLED_ShowSignedNum(2, 1, distance1, 6);
-	OLED_ShowSignedNum(3, 1, distance2, 6);
+	OLED_ShowSignedNum(3, 1, speed1, 6);
 }

@@ -27,7 +27,7 @@ int main(void)
 	//uint8_t element_flag=0; //元素标志位 0正常巡线，1到7 7个多路口  8停止标志位
 	
 	BUZZER_Init();
-	BUZZER_2Sec();
+	//BUZZER_05Sec();
 	OLED_Init();  //屏幕初始化
 	Motor_Init(); //电机初始化
 	KEY_Init();   //按键初始化
@@ -40,12 +40,14 @@ int main(void)
 	while(1)
 	{
 		OLED_Show();
+		Read_EncoderA();
+		sent_data1(flag_left,flag_right,flag_front,flag_turn,flag_end,Cx);
 		if(start_flag == 1)
 		{ 
-			Motor_SetSpeed(100);
-			Motor_SetSpeed2(100);
-//			if(Move_Q1(30)) //CHANGE PID IF CHANGE THIS //todo!: NEDD a function for changing this on OLED
-//				break;
+//			Motor_SetSpeed2(20);
+//			Motor_SetSpeed(20);
+			if(Simple_Move_Q1(25)) //CHANGE PID IF CHANGE THIS //todo!: NEDD a function for changing this on OLED
+				break;
 		}
 	}
 

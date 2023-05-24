@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "Serial.h"
 
-extern int Cy, flag_treasure, flag_trap, flag_left, flag_right, flag_front, flag_turn;
+extern int Cy, flag_treasure, flag_trap, flag_left, flag_right, flag_front, flag_turn, flag_end;
 extern uint8_t Cx;
 
 void OpenMV_On_Recieve(uint8_t Cx, int Cy);

@@ -3,7 +3,7 @@
 #include "Delay.h"
 
 uint8_t Cx = 0x00;
-int Cy, flag_treasure=0, flag_trap=0, flag_left=0, flag_right=0, flag_front=0, flag_turn=0;
+int Cy, flag_treasure=0, flag_trap=0, flag_left=0, flag_right=0, flag_front=0, flag_turn=0, flag_end=0;
 
 // Internal
 // 0b00000001(0x01) left 0b00000010(0x02) front    0b00000100(0x04) right
@@ -27,13 +27,15 @@ static void set_Flags(uint8_t Cx, int _Cy){
 	//treasure
 	if ((Cx & 0x10) && !flag_trap) flag_treasure = 1;
 	else flag_treasure = 0;
+	//end
+	if (Cx & 0x80) flag_end = 1;
 }
 
 //Public: 
 void OpenMV_Display_Specs(void)
 {		
-	OLED_ShowString(1, 1, "OpMv:");
-	OLED_ShowBinNum(2, 5,Cx,8);
+	OLED_ShowString(1,1,"OpMv:");
+	OLED_ShowBinNum(2,5,Cx,8);
 	OLED_ShowSignedNum(3,5,Cy,3);
 }
 
