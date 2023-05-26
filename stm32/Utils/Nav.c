@@ -7,6 +7,7 @@
 #include "OLED.h"
 #include "MoveLogic.h"
 #include "Encoder.h"
+#include "Buzzer.h"
 
 // int delay_time = 700;
 int foward_speed = 25;
@@ -134,7 +135,17 @@ void Turn_180(void)
 
 int Track_Line(int Speed) {
 	//todo:! Stop for a new point when no front line is detected.
-	static int front_line_accu = 0;
+	if (flag_treasure == 1 && !flag_treasure_found){
+		flag_treasure_found = 1;
+		Go_Straight(25);
+		Encoder_Delay(650);
+		Stop();
+		BUZZER_2Sec();
+		Go_Straight(-25);
+		Encoder_Delay(650);
+		Stop();
+		return 1;
+	}
 	if (flag_turn == 1){
 		int temp_left_flag = flag_left, temp_right_flag = flag_right;
 		Delay_ms(15);

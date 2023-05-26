@@ -64,6 +64,8 @@ int main(void)
 				Stop();
 				start_flag = 0;
 			}
+		} else {
+			Delay_ms(10);
 		}
 		if (flag_end == 1) {
 			Go_Straight(20);

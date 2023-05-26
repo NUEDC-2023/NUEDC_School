@@ -19,7 +19,7 @@ left_roi =  (			  side_th , 130, side_wide, 130)
 right_roi = (320-side_th-side_wide , 130, side_wide, 130)
 middle_roi = ((int)((320-middle_wide)/2), 220, middle_wide, 20)
 front_roi = ((int)((320-front_wide)/2), 130, front_wide , 20)
-treasre_roi = (10, 10, 300, 180) # twrk
+treasre_roi = (10, 10, 300, 180) # twrk 必须在最前面，保证没有阻塞动作会执行
 
 # grey_threshold =(0, 30, 10, -74, -52, 34)
 # grey_middle_threshold = (18, 45, -10, 19, -31, 0) # with mask

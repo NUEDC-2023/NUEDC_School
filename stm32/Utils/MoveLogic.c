@@ -343,7 +343,7 @@ void Move_Logic_Display(int is_start)
 {
 	OLED_Clear();
 	OLED_ShowString(2, 2, "Mode:");
-	OLED_ShowNum(2, 6, flag_question, 1);
+	OLED_ShowSignedNum(2, 6, flag_question, 1);
 	if (flag_question == 2) {
 		OLED_ShowString(3, 2, "Route:");
 		OLED_ShowNum(3, 8, flag_area, 2);
