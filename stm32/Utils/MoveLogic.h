@@ -17,15 +17,19 @@
 
 #define MAP_SIZE 	85
 #define MAP_CONTENT_SIZE 3
-#define ROUTE_MAP_SIZE 6
+#define ROUTE_MAP_SIZE 8
 #define ROUTE_MAP_CONTENT_SIZE 11
 
 extern int flag_bug_sentinal;
+extern int flag_question;
 
-int Correct_Direction(int direction);
+int Correct_Turn(int turn);
 int Move_Q1(int speed);
-int Move(int Speed);
-void Move_Logic_Display(void);
+int Move_Q2(int speed);
 int Simple_Move_Q1(int speed);
+int Move(int Speed);
+void Move_Logic_Display(int is_start);
+void Change_Mode(int change_by);
+void Change_Route(int change_by);
 
 extern int Info_Map[MAP_SIZE][MAP_CONTENT_SIZE], cur_direction;

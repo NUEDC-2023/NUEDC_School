@@ -255,7 +255,7 @@ void Encoder_Delay(short marks)
 void Encoder_Display_Content(void)
 {
 	Read_EncoderA();
-	OLED_ShowString(1, 1, "Encoder(D|S):");
-	OLED_ShowSignedNum(2, 1, distance1, 6);
-	OLED_ShowSignedNum(3, 1, speed1, 6);
+	OLED_ShowString(1, 2, "Encoder(D|S):");
+	OLED_ShowSignedNum(2, 2, distance1, 6);
+	OLED_ShowSignedNum(3, 2, speed1, 6);
 }

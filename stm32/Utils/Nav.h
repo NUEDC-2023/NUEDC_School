@@ -10,3 +10,4 @@ void Detection_Turn_Right(void);
 void Turn_180(void);
 int Track_Line(int Fix_Speed);
 int Simple_Track_Line(int Fix_Speed);
+int Correct_Direction(int);

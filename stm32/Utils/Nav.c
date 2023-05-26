@@ -11,32 +11,27 @@
 // int delay_time = 700;
 int foward_speed = 25;
 int turn_speed = 18;
-int turn_angle = 75;
-int enc_delay = 755;
-int mark = 620;
+int turn_angle = 78;
+int enc_delay = 740;
 long long int ideal_heading = 0;
 int angle_diff = 0;
 //Internal:
 //Ñ²Ïß´úÂë
 static void line_track(int Speed){
+	angle_diff = roll_holder - ideal_heading;
 	if (Cy == 256) //256 for no detection.
 	{
-		//Slowly go ahead when no black line is detected.
-		Motor_SetSpeed(Speed*0.6);
-		Motor_SetSpeed2(Speed*0.6);
-		Delay_ms(50);
-		return;
-	} // Easier for later calc.
-	
-	angle_diff = roll_holder - ideal_heading;
-  Cy += angle_diff;
+		Cy = 50 + angle_diff;
+	}	else {
+		Cy += angle_diff*1;
+	}
 	//todo: debug only
 	
   float output = pid_cal(Cy,50) +50;
 	int leftSpeed = Speed*output/100;
 	int rightSpeed = Speed - leftSpeed;
-	if (leftSpeed > 40) leftSpeed = 40;
-	if (rightSpeed > 40) rightSpeed = 40;
+	if (leftSpeed > 50) leftSpeed = 50;
+	if (rightSpeed > 50) rightSpeed = 50;
 	if (leftSpeed < 15) leftSpeed = 15;
 	if (rightSpeed < 15) rightSpeed = 15;
 	
@@ -70,27 +65,24 @@ void Go_Straight(int speed)
 void Detection_Turn_Left(void)
 {
 	OLED_Clear();
-	OLED_ShowString(1, 1, "Detection_Turn_Left...");
+	OLED_ShowString(1, 1, "D_T_L...");
   Go_Straight(foward_speed);
 	Encoder_Delay(enc_delay);
 	Turn_Left();
-	Stop();
-	Delay_ms(50);
 }
 
 void Detection_Turn_Right(void)
 {
 	OLED_Clear();
-	OLED_ShowString(1, 1, "Detection_Turn_Right...");
+	OLED_ShowString(1, 1, "D_T_R...");
   Go_Straight(foward_speed);
 	Encoder_Delay(enc_delay);
 	Turn_Right();
-	Stop();
-	Delay_ms(50);
 }
 
 void Turn_Right(void)
 {
+	sent_data1(cur_direction, 0, 0, 0, 0, 0);
 	Motor_SetSpeed(-turn_speed);
 	Motor_SetSpeed2(turn_speed);
 	while(1)
@@ -108,6 +100,7 @@ void Turn_Right(void)
 
 void Turn_Left(void)
 {
+	sent_data1(cur_direction, 0, 0, 0, 0, 0);
 	Motor_SetSpeed(turn_speed);
 	Motor_SetSpeed2(-turn_speed);
 	while(1)
@@ -119,7 +112,7 @@ void Turn_Left(void)
 	}
 	Stop();
 	ideal_heading += 90; 
-	cur_direction = cur_direction +1; //todo: Robustness decreased, as the direction is ddicated by turning rather than real heading.
+	cur_direction = cur_direction +1;
 	cur_direction = Correct_Direction(cur_direction);
 }
 void Turn_180(void)
@@ -128,27 +121,27 @@ void Turn_180(void)
 	Motor_SetSpeed2(20);
 	while(1)
 	{
-		if (roll_holder - ideal_heading <= - 170) 
+		if (roll_holder - ideal_heading <= - 169) 
 		{
 			break;
 		}
 	}
 	Stop();
 	ideal_heading -= 180; 
-	cur_direction = cur_direction -2; //todo: Robustness decreased, as the direction is dedicated by turning rather than real heading.
+	cur_direction = cur_direction -2; 
 	cur_direction = Correct_Direction(cur_direction);
 }
 
 int Track_Line(int Speed) {
 	//todo:! Stop for a new point when no front line is detected.
-	sent_data1(flag_left,flag_right,flag_front,flag_turn,Cy,0);
+	static int front_line_accu = 0;
 	if (flag_turn == 1){
 		int temp_left_flag = flag_left, temp_right_flag = flag_right;
 		Delay_ms(15);
-		if (flag_bug_sentinal){
-			flag_bug_sentinal = 0;
-			return 0;
-		}
+//		if (flag_bug_sentinal){
+//			flag_bug_sentinal = 0;
+//			return 0;
+//		}
 		if (flag_front + flag_left + flag_right >= 2 ) {
 			return 0;
 		} else {		
@@ -158,9 +151,12 @@ int Track_Line(int Speed) {
 				Detection_Turn_Right();
 			}
 		}
+	} else if (flag_front == 0 && Cy == 256){
+		return 0;
 	} else {
 		line_track(Speed);
 	}
+	
 	return 1;
 }
 

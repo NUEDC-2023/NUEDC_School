@@ -21,9 +21,9 @@ static void ring_check_holder(void)
 //Public
 void Gyroscope_Display_Specs()
 {
-	OLED_ShowString(1,1,"Gyro roll_t,roll:");
-	OLED_ShowSignedNum(2, 3, roll_holder, 10);
-	OLED_ShowSignedNum(3, 3, roll, 10);
+	OLED_ShowString(1,2,"Gyro roll_t,roll:");
+	OLED_ShowSignedNum(2, 2, roll_holder, 10);
+	OLED_ShowSignedNum(3, 2, roll, 10);
 }
 
 void Init_Gyro_Data(){

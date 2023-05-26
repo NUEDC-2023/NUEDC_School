@@ -20,7 +20,8 @@
 
 uint8_t KeyNum;
 int8_t Speed;
-uint8_t start_flag = 1; //起始标志位
+uint8_t start_flag = 0; //起始标志位
+int speed = 32;
 
 int main(void)
 {
@@ -30,12 +31,13 @@ int main(void)
 	//BUZZER_05Sec();
 	OLED_Init();  //屏幕初始化
 	Motor_Init(); //电机初始化
-	KEY_Init();   //按键初始化
+	KEY_Init(&start_flag);   //按键初始化
 	Serial_Gyroscope_Init(); //陀螺仪串口通信初始化
 	Encoder_Init();
 	Delay_ms(5000); //Omv start up
 	Serial_Openmv_Init();	//Openmv串口通信初始化
-	
+
+
 	//以下书写主代码
 	while(1)
 	{
@@ -43,20 +45,34 @@ int main(void)
 		Read_EncoderA();
 		if(start_flag == 1)
 		{ 
-//			Motor_SetSpeed2(20);
-//			Motor_SetSpeed(20);
-			if(Move_Q1(35)) //CHANGE PID IF CHANGE THIS //todo!: NEDD a function for changing this on OLED
-				break;
+			if (flag_question == 0){
+				if(Simple_Move_Q1(speed)) //todo: NEDD a function for changing this on OLED
+					break;
+			}else if (flag_question == 1){
+				if(Move_Q1(speed)) //todo: NEDD a function for changing this on OLED
+					break;
+			} else if (flag_question == 2) {
+				if(Move_Q2(speed)) //todo: NEDD a function for changing this on OLED
+					break;
+			} else if (flag_question == -1) {
+				Motor_SetSpeed(20);
+				Motor_SetSpeed2(20);
+				Delay_ms(2000);
+				Motor_SetSpeed(-20);
+				Motor_SetSpeed2(-20);
+				Delay_ms(2000);
+				Stop();
+				start_flag = 0;
+			}
 		}
 		if (flag_end == 1) {
 			Go_Straight(20);
 			Encoder_Delay(1700);
 			Stop();
-			break;
+			start_flag = 0;
 		}
 	}
-	sent_data1(flag_left,flag_right,flag_front,flag_turn,Cy,0);
-
+	
 	OLED_Clear();
 	OLED_ShowString(1, 1, "Prgm ended...");
 }

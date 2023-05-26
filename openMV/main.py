@@ -18,8 +18,8 @@ end_roi = (58, 100, 220, 50)
 left_roi =  (			  side_th , 130, side_wide, 130)
 right_roi = (320-side_th-side_wide , 130, side_wide, 130)
 middle_roi = ((int)((320-middle_wide)/2), 220, middle_wide, 20)
-front_roi = ((int)((320-front_wide)/2), 80, front_wide , 20)
-red_roi = (10, 10, 300, 180)
+front_roi = ((int)((320-front_wide)/2), 130, front_wide , 20)
+treasre_roi = (10, 10, 300, 180) # twrk
 
 # grey_threshold =(0, 30, 10, -74, -52, 34)
 # grey_middle_threshold = (18, 45, -10, 19, -31, 0) # with mask
@@ -32,19 +32,20 @@ red_roi = (10, 10, 300, 180)
 # grey_left_threshold = (12, 37, -30, 24, -41, 23)
 # front_grey_threshold = (31, 54, -20, 19, -26, 4)
 
-grey_middle_threshold = (30, 56, 9, -13, -19, 19)
-grey_right_threshold = (19, 47, -18, 22, -25, 1)
-grey_left_threshold = (30, 47, -24, 15, -40, 5)
-front_grey_threshold = (31, 54, -20, 19, -26, 4)
+grey_middle_threshold = (30, 58, 9, -13, -19, 19)
+grey_right_threshold = (19, 54, -18, 22, -25, 8)
+grey_left_threshold = (19, 54, -24, 15, -24, 5)
+front_grey_threshold = (10, 75, -20, 19, -26, 4)
 end_threshold = (25, 53, 26, 81, 23, 54)
-red_threshold = (24, 48, 6, 60, 4, 52)
+treasure_threshold = (24, 48, 6, 60, 4, 52) # twrk
 
 end_area_th = 9000
+front_area_th = 500
 side_area_th = 100
 side_area_max_th = 800
-red_area_th=2000 # 待調整
+treasure_area_th=2000 # twrk
 middle_area_th = 600
-side_detect_th = 165
+side_detect_th = 160
 # middle_area_max_th = 1200
 
 object=0
@@ -91,15 +92,13 @@ if __name__ == '__main__':
         left_line_blobs = img.find_blobs([grey_left_threshold], merge = True, roi = left_roi)
         right_line_blobs = img.find_blobs([grey_right_threshold], merge = True, roi = right_roi)
         middle_line_blobs = img.find_blobs([grey_middle_threshold], merge = True, roi = middle_roi)
-        red_blobs = img.find_blobs([red_threshold], pixels_threshold=150, roi=red_roi, area_threshold=130)
+        treasure_blobs = img.find_blobs([treasure_threshold], merge = True, roi=treasure_roi)
         front_line_blobs = img.find_blobs([front_grey_threshold], roi = front_roi)
 
-        if red_blobs:
-            b = max(red_blobs, key=lambda x: x.area())
-            img.draw_circle((b.cx(), b.cy(),int((b.w()+b.h())/4)))
-            if b.pixels() > red_area_th:
-                cx = cx|0b00010000
-            else :
+        if treasure_blobs:
+            b = max(treasure_blobs, key=lambda x: x.area())
+            if b.pixels() > side_area_th :
+                img.draw_circle((b.cx(), b.cy(),int((b.w()+b.h())/4)))
                 cx = cx|0b00001000
 
         a_sentinal = False
@@ -147,10 +146,11 @@ if __name__ == '__main__':
                 middle_line_blobs = False;
 
         if front_line_blobs:
-            cx=cx|0b00000010
             b = max(front_line_blobs, key=lambda x: x.area())
-            img.draw_rectangle(b.rect(), color = WHITE, thickness = 2)
-            img.draw_cross(b[5], b[6], color = WHITE, thickness = 2)
+            if  b.pixels() > front_area_th:
+                cx=cx|0b00000010
+                img.draw_rectangle(b.rect(), color = WHITE, thickness = 2)
+                img.draw_cross(b[5], b[6], color = WHITE, thickness = 2)
 
         print(cx)
         sending_data(cx, cy)

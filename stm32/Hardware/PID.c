@@ -4,7 +4,7 @@
 
 float kp=1.8;
 float ki=0.1;
-float kd=3.8;
+float kd=1;
 
 float pid_cal(int input,int measure)
 {

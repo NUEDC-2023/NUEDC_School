@@ -146,7 +146,7 @@ int key_scan2(void);
 int key_scan3(int i);
 
 void OLED_Show(void);
-void KEY_Init(void);//IO初始化
+void KEY_Init(uint8_t* p_flag_show);//IO初始化
 uint8_t KEY_Scan(uint8_t);  	//按键扫描函数					    
 
 #endif

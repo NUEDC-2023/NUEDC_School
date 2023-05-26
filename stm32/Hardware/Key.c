@@ -11,8 +11,10 @@
 int flag_page;
 int point=1;
 int time;
-void KEY_Init(void) //IO初始化
+uint8_t* p_flag_start;
+void KEY_Init(uint8_t* m_p_flag_start) //IO初始化
 { 
+	p_flag_start = m_p_flag_start;
 	GPIO_InitTypeDef GPIO_InitStructure;
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOE,ENABLE);  //使能PE,PC时钟
 	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_12|GPIO_Pin_11|GPIO_Pin_10;             
@@ -81,9 +83,9 @@ int key_scan3(int i)
 		case 0:return 0;
 		
 		case 1:{flag_page--;break;}//上一页
-		case 2:{point--;break;}//上
+		case 2:{if (point > 1) point--; break;}//上
 		case 3:{flag_page++;break;}//下一页
-		case 8:{point++;break;}//下
+		case 8:{if (point < 4) point++;break;}//下
 		
 		// case 9:{start2=1;break;}//启动时依旧执行按键扫描，未按下启动时关闭按键扫描
 		case 7://帧率显示
@@ -101,9 +103,21 @@ int key_scan3(int i)
 					{
 						switch (point)//第point行
 						{
-							case 1:{break;}
-							case 2:{break;}
-							case 3:{break;}
+							case 1:
+								if (*p_flag_start == 0)
+								{
+									*p_flag_start = 1;
+									flag_page = -1;
+								} else {
+									*p_flag_start = 0;
+								}
+								break;
+							case 2:
+								Change_Mode(-1);
+								break;
+							case 3:
+								Change_Route(-1);
+								break;
 							case 4:{break;}
 							
 						}
@@ -113,11 +127,22 @@ int key_scan3(int i)
 					{
 						switch (point)//第point行
 						{
-							case 1:{break;}
-							case 2:{break;}
-							case 3:{break;}
+							case 1:
+								if (*p_flag_start == 0)
+								{
+									*p_flag_start = 1;
+									flag_page = -1;
+								} else {
+									*p_flag_start = 0;
+								}
+								break;
+							case 2:
+								Change_Mode(1);
+								break;
+							case 3:
+								Change_Route(1);
+								break;
 							case 4:{break;}
-							
 						}
 					}
 					break;
@@ -188,11 +213,6 @@ int key_scan3(int i)
 }
 void OLED_Show(void)
 {
-	static int start=0;
-	if(start==0)
-	{
-	
-	}
 	OLED_Clear();
 	OLED_ShowChar(point,1,'-');
 	static int flag1=0;
@@ -208,10 +228,10 @@ void OLED_Show(void)
 	
 	switch(flag_page) {
 		case -1:
-			Move_Logic_Display();
+			OpenMV_Display_Specs();
 			break;
 		case 0:
-			OpenMV_Display_Specs();
+			Move_Logic_Display(*p_flag_start);
 			break;
 		case 1:
 			Encoder_Display_Content();
@@ -219,7 +239,6 @@ void OLED_Show(void)
 		case 2:
 			Gyroscope_Display_Specs();
 			break;
-		
 //			y1h1_c;
 //			y1h2_c;
 //			y1h3_c;
