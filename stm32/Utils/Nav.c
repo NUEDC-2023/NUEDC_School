@@ -10,10 +10,11 @@
 #include "Buzzer.h"
 
 // int delay_time = 700;
+int filter_acc_th = 0; //have impact on nav  delay
 int foward_speed = 25;
 int turn_speed = 18;
-int turn_angle = 78;
-int enc_delay = 740;
+int turn_angle = 85;
+int enc_delay = 760;
 long long int ideal_heading = 0;
 int angle_diff = 0;
 //Internal:
@@ -24,7 +25,7 @@ static void line_track(int Speed){
 	{
 		Cy = 50 + angle_diff;
 	}	else {
-		Cy += angle_diff*1;
+		Cy += angle_diff*0.92;
 	}
 	//todo: debug only
 	
@@ -59,8 +60,8 @@ void Stop(void)
 // Turning control
 void Go_Straight(int speed)
 {
-	Motor_SetSpeed(speed);
-	Motor_SetSpeed2(speed*0.9);
+	Motor_SetSpeed(speed*0.9);
+	Motor_SetSpeed2(speed);
 }
 
 void Detection_Turn_Left(void)
@@ -83,7 +84,6 @@ void Detection_Turn_Right(void)
 
 void Turn_Right(void)
 {
-	sent_data1(cur_direction, 0, 0, 0, 0, 0);
 	Motor_SetSpeed(-turn_speed);
 	Motor_SetSpeed2(turn_speed);
 	while(1)
@@ -101,7 +101,6 @@ void Turn_Right(void)
 
 void Turn_Left(void)
 {
-	sent_data1(cur_direction, 0, 0, 0, 0, 0);
 	Motor_SetSpeed(turn_speed);
 	Motor_SetSpeed2(-turn_speed);
 	while(1)
@@ -118,11 +117,11 @@ void Turn_Left(void)
 }
 void Turn_180(void)
 {
-	Motor_SetSpeed(-20);
-	Motor_SetSpeed2(20);
+	Motor_SetSpeed(-turn_speed);
+	Motor_SetSpeed2(turn_speed+5);
 	while(1)
 	{
-		if (roll_holder - ideal_heading <= - 169) 
+		if (roll_holder - ideal_heading <= - 2*turn_angle -9) 
 		{
 			break;
 		}
@@ -131,24 +130,33 @@ void Turn_180(void)
 	ideal_heading -= 180; 
 	cur_direction = cur_direction -2; 
 	cur_direction = Correct_Direction(cur_direction);
+	Stop();
 }
 
 int Track_Line(int Speed) {
+	sent_data1(flag_left,flag_right,flag_front,flag_turn,cur_direction,cur_point);
 	//todo:! Stop for a new point when no front line is detected.
 	if (flag_treasure == 1 && !flag_treasure_found){
 		flag_treasure_found = 1;
 		Go_Straight(25);
-		Encoder_Delay(650);
+		Encoder_Delay(1100);
 		Stop();
 		BUZZER_2Sec();
 		Go_Straight(-25);
-		Encoder_Delay(650);
+		Encoder_Delay(-1400);
 		Stop();
 		return 1;
 	}
-	if (flag_turn == 1){
+	if (flag_turn){
 		int temp_left_flag = flag_left, temp_right_flag = flag_right;
-		Delay_ms(15);
+		int filter_acc = 0;
+		while(filter_acc < filter_acc_th) {
+			Go_Straight(15);
+			Delay_ms(5);
+			if (!flag_turn)
+				return 1;
+			filter_acc++;
+		}
 //		if (flag_bug_sentinal){
 //			flag_bug_sentinal = 0;
 //			return 0;
@@ -163,7 +171,10 @@ int Track_Line(int Speed) {
 			}
 		}
 	} else if (flag_front == 0 && Cy == 256){
-		return 0;
+		Delay_ms(15);
+		if (flag_front == 0 && Cy == 256){			
+			return 0;
+		}
 	} else {
 		line_track(Speed);
 	}

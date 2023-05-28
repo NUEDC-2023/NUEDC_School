@@ -9,4 +9,4 @@ void TIMER_config2(void);
 void Encoder_Init(void);
 void TIMER_config1(void);
 void Encoder_Display_Content(void);
-void Encoder_Delay(short marks);
+void Encoder_Delay(int marks);

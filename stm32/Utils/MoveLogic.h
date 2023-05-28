@@ -32,4 +32,4 @@ void Move_Logic_Display(int is_start);
 void Change_Mode(int change_by);
 void Change_Route(int change_by);
 
-extern int Info_Map[MAP_SIZE][MAP_CONTENT_SIZE], cur_direction, flag_treasure_found;
+extern int Info_Map[MAP_SIZE][MAP_CONTENT_SIZE], cur_direction, flag_treasure_found, cur_point;

@@ -21,14 +21,14 @@
 uint8_t KeyNum;
 int8_t Speed;
 uint8_t start_flag = 0; //起始标志位
-int speed = 32;
+int speed = 35;
 
 int main(void)
 {
 	//uint8_t element_flag=0; //元素标志位 0正常巡线，1到7 7个多路口  8停止标志位
 	
 	BUZZER_Init();
-	//BUZZER_05Sec();
+	BUZZER_05Sec();
 	OLED_Init();  //屏幕初始化
 	Motor_Init(); //电机初始化
 	KEY_Init(&start_flag);   //按键初始化
@@ -43,7 +43,14 @@ int main(void)
 	{
 		OLED_Show();
 		Read_EncoderA();
-		if(start_flag == 1)
+		if (flag_end == 1) {
+			Go_Straight(20);
+			Encoder_Delay(1800);
+			Stop();
+			start_flag = 0;
+			break;
+		}
+		if(start_flag == 1 || cur_point == 8)
 		{ 
 			if (flag_question == 0){
 				if(Simple_Move_Q1(speed)) //todo: NEDD a function for changing this on OLED
@@ -57,21 +64,17 @@ int main(void)
 			} else if (flag_question == -1) {
 				Motor_SetSpeed(20);
 				Motor_SetSpeed2(20);
-				Delay_ms(2000);
+				Delay_ms(4000);
 				Motor_SetSpeed(-20);
 				Motor_SetSpeed2(-20);
+				Delay_ms(4000);
+				Turn_180();
 				Delay_ms(2000);
 				Stop();
 				start_flag = 0;
 			}
 		} else {
 			Delay_ms(10);
-		}
-		if (flag_end == 1) {
-			Go_Straight(20);
-			Encoder_Delay(1700);
-			Stop();
-			start_flag = 0;
 		}
 	}
 	

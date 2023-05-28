@@ -15,6 +15,7 @@ int cur_direction = MAP_LEFT;
 int flag_question = 2;
 int flag_area = 1;
 int flag_treasure_found = 0;
+int cur_point = 1;
 int Info_Map[MAP_SIZE][MAP_CONTENT_SIZE] = 
 {
 	{1, 2,  MAP_DOWN},
@@ -109,7 +110,7 @@ int route_Map[ROUTE_MAP_SIZE][ROUTE_MAP_CONTENT_SIZE] =
 {
 	{1, 40, 9, 10, -1},
 	{1, 40, 11, 12, 13, 34, 13, 14, -1},
-	{4, 16, 20, 16, 15, 12, -1},
+	{4, 16, 15, 12, -1},
 	{6, 18, 19, 18, 15, 17, -1},
 	{7, 32, 31, 33, -1},
 	{7, 32, 30, 25, 26, 27, 26, 29, 28, -1},
@@ -118,15 +119,17 @@ int route_Map[ROUTE_MAP_SIZE][ROUTE_MAP_CONTENT_SIZE] =
 }; 
 static int is_End_Point(int current_point){
 	//dead end calc.
-	for (int i = 0; i < MAP_SIZE; i++) {
-		if (Info_Map[i][0] == current_point){
-			if (Info_Map[i +1][0] == current_point){
-				return 0;
+	int* route = route_Map[flag_area-1];
+	int index = 0;
+	for (; route[index] != -1; index++){
+		if (route[index] == current_point){
+			if (route[index + 1] != -1 && route[index + 2] == current_point){
+				return 1;
 			}
-			return 1;
+			return 0;
 		}	
 	}
-	return -1;
+	Stop(); //STUB!
 }
 
 static int search_Q1_Next_Point(int current_point)
@@ -137,7 +140,25 @@ static int search_Q1_Next_Point(int current_point)
 static int search_Q2_Next_Point(int current_point)
 {
 	int* route = route_Map[flag_area-1];
+	static int subroute_index = 1;
 	int next_point = -1;
+	
+	if (current_point > 8 && flag_treasure_found){
+		//going back
+		if (is_End_Point(current_point)){
+			subroute_index -= 3;
+			next_point = route[subroute_index];
+		} else {
+			subroute_index -= 1;
+			next_point = route[subroute_index];
+		}
+	}
+	
+	//found
+	if (current_point < 8 && current_point > 0 && flag_treasure_found){
+		return search_Q1_Next_Point(current_point);
+	}
+	
 	//Haven't get on the branch
 	if (current_point < 8 && !flag_treasure_found){
 		if (current_point == route[0]) {
@@ -150,36 +171,15 @@ static int search_Q2_Next_Point(int current_point)
 	//on the branch, not found
 	if (current_point > 8 && !flag_treasure_found)
 	{
-		int index = 0;
-		for (; route[index] != -1; index++) {
-			if(route[index] == current_point){
-				next_point = route[index +1];
-			}
-		}
+		subroute_index += 1;
+		next_point = route[subroute_index];
 		// nothing found, go back.
 		if (next_point == -1){
+			subroute_index -=2;
 			flag_treasure_found = 1;
-			next_point = route[index - 2];
+			next_point = route[subroute_index];
 		}
 	}	
-	
-	if (current_point > 8 && flag_treasure_found){
-		//going back
-		int index = 0;
-		for (; index < route[index]; index++) {
-			if(route[index] == current_point){
-				if (is_End_Point(route[index - 1])){
-					next_point = route[index - 3];
-				}
-				next_point = route[index -1];
-			}
-		} 
-	}
-	
-	//found
-	if (current_point < 8 && flag_treasure_found){
-		return search_Q1_Next_Point(current_point);
-	}
 	
 	return next_point;
 }
@@ -207,7 +207,6 @@ static int get_Turn_Direction(int cur_point, int next_point)
 	//delete this, debug only:
 	Stop();
 	BUZZER_05Sec();
-	Delay_ms(500);	
 	return turn;
 }
 
@@ -243,7 +242,7 @@ int Correct_Direction(int direction)
 	}
 }
 
-int cur_point = 1;
+
 int Simple_Move_Q1(int speed)
 {
 	//todo!: lack return 0 condition detection.
@@ -269,6 +268,13 @@ int Simple_Move_Q1(int speed)
 				Go_Straight(20);
 				Delay_ms(300);
 				break;
+			default:
+				OLED_Clear();
+				OLED_ShowString(1, 1, "T_AHEAD...");
+				Go_Straight(20);
+				Delay_ms(300);
+				break;
+				
 		}
 		itr++;
 	} 
@@ -305,7 +311,6 @@ int Move_Q1(int speed)
 int Move_Q2(int speed)
 {
 	static int turn = 0;
-//	sent_data1(flag_left,flag_right,flag_front,flag_turn,turn,cur_point);
 	if(!Track_Line(speed))
 	{
 		//routing logic		
@@ -325,15 +330,18 @@ int Move_Q2(int speed)
 				Detection_Turn_Left();
 				break;
 			case TURN_BACK:
+				Go_Straight(20);
+				Encoder_Delay(600);
 				Turn_180();
 				break;
 			case TURN_AHEAD:
 				OLED_Clear();
 				OLED_ShowString(1, 1, "TURN_AHEAD...");
 				Go_Straight(20);
-				Encoder_Delay(680);
+				Encoder_Delay(550);
 				break;
 		}
+		BUZZER_05Sec();
 		cur_point = next_point;
 	}
 	return 0;

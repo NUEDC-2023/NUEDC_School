@@ -237,7 +237,7 @@ void TIM4_IRQHandler(void)
 	TIM4->SR&=~(1<<0);//清除中断标志位 	    
 }
 
-void Encoder_Delay(short marks)
+void Encoder_Delay(int marks)
 {	
 	Delay_ms(20);	
 	distance1 = 0;
@@ -245,7 +245,10 @@ void Encoder_Delay(short marks)
 	{
 		Delay_ms(10);
 		Read_EncoderA();
-		if (distance1 >= marks){
+		if (marks > 0 && distance1 >= marks){
+			break;
+		}
+		if (marks < 0 && distance1 <= marks){
 			break;
 		}
 	}	

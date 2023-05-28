@@ -22,10 +22,7 @@ static void set_Flags(uint8_t Cx, int _Cy){
 	if (flag_left + flag_right != 0) flag_turn = 1;
 	else flag_turn = 0;
 	//trap
-	if (Cx & 0x08) flag_trap = 1;
-	else flag_trap = 0;
-	//treasure
-	if ((Cx & 0x10) && !flag_trap) flag_treasure = 1;
+	if (Cx & 0x08) flag_treasure = 1;
 	else flag_treasure = 0;
 	//end
 	if (Cx & 0x80) flag_end = 1;

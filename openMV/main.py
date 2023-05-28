@@ -8,44 +8,49 @@ YELLOW = (255, 255, 0)
 
 sensor_brightnes = 1
 
-side_th=20
-side_wide=20
+side_th=25
+side_wide=22
 
 middle_wide=200
-front_wide = 120
+front_wide = 200
 
-end_roi = (58, 100, 220, 50)
-left_roi =  (			  side_th , 130, side_wide, 130)
-right_roi = (320-side_th-side_wide , 130, side_wide, 130)
-middle_roi = ((int)((320-middle_wide)/2), 220, middle_wide, 20)
-front_roi = ((int)((320-front_wide)/2), 130, front_wide , 20)
-treasre_roi = (10, 10, 300, 180) # twrk 必须在最前面，保证没有阻塞动作会执行
+end_roi = (58, 50, 220, 50)
+left_roi =  (			  side_th , 110, side_wide, 150)
+right_roi = (320-side_th-side_wide , 110, side_wide, 150)
+middle_roi = ((int)((320-middle_wide)/2), 210, middle_wide, 20)
+front_roi = ((int)((320-front_wide)/2), 90, front_wide , 20)
+treasure_roi = (10, 10, 300, 100) # twrk 必须在最前面，保证没有阻塞动作会执行
 
-# grey_threshold =(0, 30, 10, -74, -52, 34)
-# grey_middle_threshold = (18, 45, -10, 19, -31, 0) # with mask
-# grey_right_threshold = (15, 44, -20, 16, -30, 15)# with mask
-# grey_left_threshold = (20, 44, -20, 16, -30, 15)# with mask
+# Good map
+grey_middle_threshold = (0, 60, -6, 9, -42, 8)
+grey_right_threshold = (16, 47, -6, 9, -42, 8)
+grey_left_threshold = (16, 47, -6, 9, -42, 8)
+grey_front_threshold = (5, 63, -30, 15, -13, 12)
+end_threshold = (10, 29, -5, 101, -128, 1)
+treasure_threshold = (34, 74, -80, -39, 17, 68)
 
-# nolight 203
-# grey_middle_threshold = (10, 32, -17, 19, -31, 21)
-# grey_right_threshold = (12, 37, -10, 19, -21, 20)
-# grey_left_threshold = (12, 37, -30, 24, -41, 23)
-# front_grey_threshold = (31, 54, -20, 19, -26, 4)
+# 203? night
+#grey_middle_threshold = (21, 64, -15, 18, -22, -2)
+#grey_right_threshold = (25, 56, -24, 35, -40, 28)
+#grey_left_threshold = (25, 62, -24, 35, -40, 28)
+#grey_front_threshold = (21, 80, -10, 10, -18, -1)
+#end_threshold = (25, 53, 26, 81, 23, 54)
+#treasure_threshold = (34, 74, -80, -39, 17, 68)
 
-grey_middle_threshold = (30, 58, 9, -13, -19, 19)
-grey_right_threshold = (19, 54, -18, 22, -25, 8)
-grey_left_threshold = (19, 54, -24, 15, -24, 5)
-front_grey_threshold = (10, 75, -20, 19, -26, 4)
-end_threshold = (25, 53, 26, 81, 23, 54)
-treasure_threshold = (24, 48, 6, 60, 4, 52) # twrk
+#grey_middle_threshold = (30, 58, 9, -13, -19, 19)
+#grey_right_threshold = (19, 54, -18, 22, -25, 8)
+#grey_left_threshold = (19, 54, -24, 15, -24, 5)
+#grey_front_threshold = (10, 75, -20, 19, -26, 4)
+#end_threshold = (25, 53, 26, 81, 23, 54)
+#treasure_threshold = (24, 48, 6, 60, 4, 52) # twrk
 
 end_area_th = 9000
-front_area_th = 500
+front_area_th = 300
 side_area_th = 100
 side_area_max_th = 800
-treasure_area_th=2000 # twrk
+treasure_area_th=400 # twrk
 middle_area_th = 600
-side_detect_th = 160
+side_detect_th = 140
 # middle_area_max_th = 1200
 
 object=0
@@ -64,7 +69,7 @@ def IMG_init():
     sensor.set_framesize(sensor.QVGA)
     sensor.set_auto_gain(False)
     sensor.set_auto_whitebal(False)
-    sensor.set_auto_exposure(False, exposure_us  = 10000)
+    sensor.set_auto_exposure(False, exposure_us  = 13427)
     sensor.skip_frames(100)
 
     red_led.on()
@@ -93,7 +98,7 @@ if __name__ == '__main__':
         right_line_blobs = img.find_blobs([grey_right_threshold], merge = True, roi = right_roi)
         middle_line_blobs = img.find_blobs([grey_middle_threshold], merge = True, roi = middle_roi)
         treasure_blobs = img.find_blobs([treasure_threshold], merge = True, roi=treasure_roi)
-        front_line_blobs = img.find_blobs([front_grey_threshold], roi = front_roi)
+        front_line_blobs = img.find_blobs([grey_front_threshold],merge = True,  roi = front_roi)
 
         if treasure_blobs:
             b = max(treasure_blobs, key=lambda x: x.area())
